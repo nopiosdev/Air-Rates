@@ -7,6 +7,14 @@
   box-shadow: 0 4px 15px rgba(58, 112, 191, .1);
 }
 
+body {
+  font-family: sans-serif;
+}
+
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .heading {}
 
 .commodity-icons {
@@ -141,9 +149,103 @@
   height: 16px;
 } */
 
-.MuiMenu-list .svg-icon{
+.MuiMenu-list .svg-icon {
   display: none;
 }
-.MuiMenu-list .Mui-selected .svg-icon{
+
+.MuiMenu-list .Mui-selected .svg-icon {
   display: block;
+}
+
+
+
+
+/* AutoComplete */
+input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e4ec;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+
+h5,
+h6 {
+  margin: 0;
+  padding-bottom: 5px;
+}
+
+p {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+input:focus {
+  outline: 1px solid lightskyblue;
+}
+
+.autoselect {
+  width: 100%;
+  text-align: left;
+  box-shadow: 0 0 4px 0 #ccc;
+  margin-top: 5px;
+}
+
+.autoselect .autorow {
+  padding: 8px;
+  display: flex;
+  cursor: pointer;
+}
+
+.autoselect .autorow .detail {
+  padding-left: 5px;
+}
+
+.autoselect .autorow:hover {
+  background-color: #eee;
+}
+
+.autoselect .customrow {
+  display: flex;
+}
+
+.autoselect .customrow .placename {
+  width: 40%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.autoselect .customrow .placemap {
+  width: 60%;
+}
+
+.loader {
+  padding: 10px;
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {
+  padding: 13px;
+  border: 1px solid #e0e4ec !important;
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 13px !important;
+}
+
+.css-xg9u7b-MuiAutocomplete-root .MuiOutlinedInput-root {
+  height: 48px;
+  padding: 0 !important;
+}
+
+.css-wgai2y-MuiFormLabel-asterisk {
+  color: red;
+}
+
+.css-9npbnl-MuiFormLabel-root-MuiInputLabel-root {
+  font-size: 12px !important;
+  margin-bottom: 5px;
+  color: #000 !important;
+  font-weight: 600 !important;
+  margin-top: 0;
 }

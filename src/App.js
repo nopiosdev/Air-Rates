@@ -1,7 +1,7 @@
 import './App.css';
 import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Chip, Paper, ToggleButton, Divider, ToggleButtonGroup, styled, ListSubheader, FormControl } from '@mui/material';
 import { Box } from '@mui/system';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { Container_Type, data, Transportion_Data } from './data';
 import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
@@ -9,14 +9,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TransportationMenu from './components/TransportationMenu';
 import InputField from './components/InputField';
 import { formReducer } from './utils/Globalfunction';
+import AutoComplete from './components/AutoComplete';
+
 function App() {
   const [metricState, setMetricState] = useState("International (SI)");
   const [commodityType, setCommodityType] = useState(null);
   const [deliveryWay, setDeliveryWay] = useState(0);
   const [transportationType, setTransportationType] = useState("");
   const [containerType, setContainerType] = useState("");
-  const [formData, setFormData] = useReducer(formReducer, {})
-
+  const [formData, setFormData] = useReducer(formReducer, {});
+  const [inputvaluefrom, setInputValuefrom] = useState('');
+  const [inputvalueto, setInputValueto] = useState('');
 
   const handleDeliveryWay = (event, val) => {
     setTransportationType("");
@@ -38,7 +41,7 @@ function App() {
       },
     },
   }));
-console.log(formData)
+
   return (
     <Container>
       <Box className='layout'>
@@ -102,7 +105,7 @@ console.log(formData)
                   placeholder="Enter commodity type or HS code"
                   inputProps={{
                     ...params.inputProps,
-                    autoComplete: 'new-password', // disable autocomplete and autofill
+                    autoComplete: 'new-password',
                     startadornment: (
                       <InputAdornment position="start">
                         <SearchIcon />
@@ -203,7 +206,7 @@ console.log(formData)
           </Grid>
         }
         <Grid container>
-          <Grid item md={4}>
+          <Grid item md={5}>
             <InputLabel required>CONTAINER TYPE</InputLabel>
             <Select
               fullWidth
@@ -228,7 +231,7 @@ console.log(formData)
               ))}
             </Select>
           </Grid>
-          <Grid item md={4} ml={4}>
+          <Grid item md={5} ml={4}>
             <InputField
               type={'number'}
               label="QUANTITY OF CONTAINERS"
@@ -239,22 +242,26 @@ console.log(formData)
           </Grid>
         </Grid>
         <Grid container mt={3}>
-          <Grid item md={4}>
-            <InputField
-              type={'text'}
-              label="FROM"
-              placeholder="City, Port"
-              onChange={setFormData}
-              name="from"
+          <Grid item md={5}>
+            <AutoComplete
+              label={'From'}
+              required={true}
+              Inputvalue={inputvaluefrom}
+              Inputplaceholder={'City , Port'}
+              onInputChange={(e) => { setInputValuefrom(e.target.value) }}
+              onSelect={(item, country) => { setInputValuefrom(item?.name + ' ' + country) }}
+              mapid={'frommap'}
             />
           </Grid>
-          <Grid item md={4} ml={4}>
-            <InputField
-              type={'text'}
-              label="TO"
-              placeholder="City, Port"
-              onChange={setFormData}
-              name="to"
+          <Grid item md={5} ml={4}>
+            <AutoComplete
+              label={'To'}
+              required={true}
+              Inputvalue={inputvalueto}
+              Inputplaceholder={'City , Port'}
+              onInputChange={(e) => { setInputValueto(e.target.value) }}
+              onSelect={(item, country) => { setInputValueto(item?.name + ' ' + country) }}
+              mapid={'tomap'}
             />
           </Grid>
         </Grid>
