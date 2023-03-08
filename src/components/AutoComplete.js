@@ -3,11 +3,12 @@ import ReactCountryFlag from "react-country-flag";
 import CommonService from '../Services/CommonService';
 import axios from "axios";
 import Loader from './Loader';
+import { Autocomplete, FormLabel, TextField } from "@mui/material";
 
 const AutoComplete = forwardRef((props, ref) => {
 
     const [listdata, setListdata] = useState([]);
-    const [listnaerbydata, setListNearBydata] = useState([]);
+    const [listnearbydata, setListNearBydata] = useState([]);
     const [selectedcountry, setSelectedCountry] = useState();
     const [showloader, setShowloader] = useState(false);
     const [search, setSearch] = useState(true);
@@ -114,98 +115,132 @@ const AutoComplete = forwardRef((props, ref) => {
         setSelectedCountry()
     }
 
-
+    console.log("listdata", listdata)
     return (
-        <div className="autocomplete">
-            <div className="label">
-                <h4 className="css-9npbnl-MuiFormLabel-root-MuiInputLabel-root">{props.label}
-                    {props.required && <span className="css-wgai2y-MuiFormLabel-asterisk">*</span>} </h4>
-            </div>
-            <div className="auto-inputfield">
-                <input
-                    ref={ref}
-                    onPointerOut={props.onInputPointerOut}
-                    onBlur={props.onInputBlur}
-                    placeholder={props.Inputplaceholder}
-                    type={'text'}
-                    value={props.Inputvalue}
-                    onChange={props.onInputChange}
-                    onKeyDown={props.onInputKeyDown}
-                    disabled={props.Inputdisabled}
-                    min="1"
-                    onFocus={props.onFocus}
-                    style={props.Inputstyle}
-                    defaultValue={props.InputdefaultValue}
-                    onWheel={props.onInputWheel}
-                    className={`input ${props.InputNewclassName}`}
-                />
-                <div className="googlemap">
-                    <div className="autoselect">
-                        {showloader &&
-                            <Loader />
-                        }
-                        {listdata != '' && listdata?.map((item, index) => {
-                            return (
-                                <div className="autorow" key={index + 2} onClick={() => { NearByplaces(item) }}>
-                                    <div className="icon">
-                                        <ReactCountryFlag
-                                            countryCode={item?.code}
-                                            style={{
-                                                width: 22,
-                                                height: 17,
-                                            }}
-                                            svg
-                                            cdnSuffix="svg"
-                                            aria-label={item?.country}
-                                        />
-                                    </div>
-                                    <div className="detail">
-                                        <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.city}</p>
-                                        <p style={{ fontSize: 13, color: '#999393' }}>{item?.city + ' ' + item?.country}</p>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                        <div className="customrow">
-                            <div className="placename">
-                                {listnaerbydata != '' && listnaerbydata?.country_ports?.map((item, index) => {
-                                    return (
-                                        <div className="autorow" key={index + 2}
-                                            onMouseEnter={() => {
-                                                onGeneratemap(item);
-                                            }}
-                                            onClick={() => {
-                                                props.onSelect(item, selectedcountry?.country);
-                                                onClear()
-                                            }}
-                                        >
-                                            <div className="icon">
-                                                <ReactCountryFlag
-                                                    countryCode={item?.country_code}
-                                                    style={{
-                                                        width: 22,
-                                                        height: 17,
-                                                    }}
-                                                    svg
-                                                    cdnSuffix="svg"
-                                                />
-                                            </div>
-                                            <div className="detail">
-                                                <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.name}</p>
-                                                <p style={{ fontSize: 13, color: '#999393' }}>{'Port of' + ' ' + selectedcountry?.country}</p>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="placemap">
-                                <div style={selectedcountry && { height: 300 }} id={props?.mapid}></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <>
+            <FormLabel className='input-label ' required>{props.label}</FormLabel>
+            <Autocomplete
+                sx={{marginTop:'5px'}}
+                freeSolo
+                fullWidth
+                options={[]}
+                autoHighlight
+                //   value={props.Inputvalue}
+                onChange={props.onInputChange}
+                getOptionLabel={(option) => option.description + " " + option.code}
+                // getOptionLabel={(option) => {
+                //   return <div component="li" >
+                //     <span className={`commodity-icons ${option?.class}`} />
+                //     {option.description} {option.code && `(${option.code})`}
+                //   </div >
+                // }
+                // }
+
+                renderOption={(props, option) => (
+                    console.log(option)
+                    // <Box component="li" {...props}>
+                    //   <div className={`commodity-icons ${option?.class}`} />
+                    //   {option.description} {option.code && `(${option.code})`}
+                    // </Box>
+                )}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        placeholder={props.Inputplaceholder}
+                    />
+                )}
+            />
+        </>
+        // <div className="autocomplete">
+        //     <div className="label">
+        //         <h4 className="css-9npbnl-MuiFormLabel-root-MuiInputLabel-root">{props.label}
+        //             {props.required && <span className="css-wgai2y-MuiFormLabel-asterisk">*</span>} </h4>
+        //     </div>
+        //     <div className="auto-inputfield">
+        //         <input
+        //             ref={ref}
+        //             onPointerOut={props.onInputPointerOut}
+        //             onBlur={props.onInputBlur}
+        //             placeholder={props.Inputplaceholder}
+        //             type={'text'}
+        //             value={props.Inputvalue}
+        //             onChange={props.onInputChange}
+        //             onKeyDown={props.onInputKeyDown}
+        //             disabled={props.Inputdisabled}
+        //             min="1"
+        //             onFocus={props.onFocus}
+        //             style={props.Inputstyle}
+        //             defaultValue={props.InputdefaultValue}
+        //             onWheel={props.onInputWheel}
+        //             className={`input ${props.InputNewclassName}`}                    
+        //         />
+        //         <div className="googlemap">
+        //             <div className="autoselect">
+        //                 {showloader &&
+        //                     <Loader />
+        //                 }
+        //                 {listdata != '' && listdata?.map((item, index) => {
+        //                     return (
+        //                         <div className="autorow" key={index + 2} onClick={() => { NearByplaces(item) }}>
+        //                             <div className="icon">
+        //                                 <ReactCountryFlag
+        //                                     countryCode={item?.code}
+        //                                     style={{
+        //                                         width: 22,
+        //                                         height: 17,
+        //                                     }}
+        //                                     svg
+        //                                     cdnSuffix="svg"
+        //                                     aria-label={item?.country}
+        //                                 />
+        //                             </div>
+        //                             <div className="detail">
+        //                                 <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.city}</p>
+        //                                 <p style={{ fontSize: 13, color: '#999393' }}>{item?.city + ' ' + item?.country}</p>
+        //                             </div>
+        //                         </div>
+        //                     )
+        //                 })}
+        //                 <div className="customrow">
+        //                     <div className="placename">
+        //                         {listnearbydata != '' && listnearbydata?.country_ports?.map((item, index) => {
+        //                             return (
+        //                                 <div className="autorow" key={index + 2}
+        //                                     onMouseEnter={() => {
+        //                                         onGeneratemap(item);
+        //                                     }}
+        //                                     onClick={() => {
+        //                                         props.onSelect(item, selectedcountry?.country);
+        //                                         onClear()
+        //                                     }}
+        //                                 >
+        //                                     <div className="icon">
+        //                                         <ReactCountryFlag
+        //                                             countryCode={item?.country_code}
+        //                                             style={{
+        //                                                 width: 22,
+        //                                                 height: 17,
+        //                                             }}
+        //                                             svg
+        //                                             cdnSuffix="svg"
+        //                                         />
+        //                                     </div>
+        //                                     <div className="detail">
+        //                                         <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.name}</p>
+        //                                         <p style={{ fontSize: 13, color: '#999393' }}>{'Port of' + ' ' + selectedcountry?.country}</p>
+        //                                     </div>
+        //                                 </div>
+        //                             )
+        //                         })}
+        //                     </div>
+        //                     <div className="placemap">
+        //                         <div style={selectedcountry && { height: 300 }} id={props?.mapid}></div>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
     )
 });
 

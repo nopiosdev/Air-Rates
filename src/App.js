@@ -32,12 +32,11 @@ function App() {
       margin: theme.spacing(0.5),
       border: 0,
       width: '100%',
-      boxShadow: "0 4px 15px rgba(58,112,191,.1)",
       '&:not(:first-of-type)': {
         borderRadius: theme.shape.borderRadius,
       },
       '&:first-of-type': {
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: '6px',
       },
     },
   }));
@@ -47,33 +46,39 @@ function App() {
       <Box className='layout'>
         <Grid container>
           <Grid item md={10}>
-            <Typography variant='h4' className='heading'>Request a quote</Typography>
-            <Typography mt={1}>And get the best rates from the leading logistics providers.</Typography>
+            <Box className='heading-wrapper'>
+              <Typography variant='h4'>Request a quote</Typography>
+              <img src="./ebook.svg" alt="ebook" />
+            </Box>
+            <Typography className='headline' mt={2}>And get the best rates from the leading logistics providers.</Typography>
           </Grid>
           <Grid item md={2}>
             <Select
               value={metricState}
               onChange={(e) => setMetricState(e.target.value)}
               fullWidth
+              className='metric-select'
             >
               <MenuItem value={"International (SI)"}>International (SI)</MenuItem>
               <MenuItem value={"Imperial (US)"}>Imperial (US)</MenuItem>
             </Select>
           </Grid>
         </Grid>
-        <Typography variant='h6' mt={2} mb={3} className='heading'>Cargo details</Typography>
+        <Typography variant='h6' mt={2} mb={3}>Cargo details</Typography>
         <Grid container>
-          <Grid item md={9} mb={1}>
+          {/* <Grid item md={9} mb={1}>
             <Grid container >
               <Grid item md={6}>
-                <InputLabel required>PRODUCT</InputLabel>
               </Grid>
               <Grid item md={6}>
-                <Typography sx={{ float: 'right' }}>HS Codes</Typography>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item md={9}>
+          </Grid> */}
+          <Grid item md={9}>         
+            <Box className="flex-box" mb={1}>
+              <InputLabel className='input-label' required>PRODUCT</InputLabel>
+              <Typography sx={{ float: 'right' }}>HS Codes</Typography>
+            </Box>
             <Autocomplete
               freeSolo
               fullWidth
@@ -125,9 +130,9 @@ function App() {
             }
           </Grid>
         </Grid>
-        <Typography variant='h6' mt={7} mb={3} className='heading'>Delivery</Typography>
+        <Typography variant='h6' mt={7} mb={3}>Delivery</Typography>
         <Grid container>
-          <Grid item md={4}>
+          <Grid item md={3}>
             <Paper
               elevation={0}
               sx={{
@@ -143,15 +148,14 @@ function App() {
                 exclusive
                 onChange={handleDeliveryWay}
               >
-                <ToggleButton value={0}>
-                  <img src="./boat.svg" alt="Plane" />
-                  SEA
+                <ToggleButton className='selected-sea' value={0}>
+                  <img src="./boat.svg" alt="Plane" />&nbsp;SEA
                 </ToggleButton>
-                <ToggleButton value={1}>
-                  <img src="./road-solid.svg" alt="Plane" /> LAND
+                <ToggleButton className='selected-land' value={1}>
+                  <img src="./road-solid.svg" alt="Plane" />&nbsp;LAND
                 </ToggleButton>
-                <ToggleButton value={2}>
-                  <img src="./plane-solid.svg" alt="Plane" />  AIR
+                <ToggleButton className='selected-air' value={2}>
+                  <img src="./plane-solid.svg" alt="Plane" />&nbsp;AIR
                 </ToggleButton>
               </StyledToggleButtonGroup>
             </Paper>
@@ -162,15 +166,15 @@ function App() {
             exclusive
             onChange={handleDeliveryWay}
           >
-            <ToggleButton value={"auto"}>
-              <img src="./rocket-solid.svg" alt="Plane" />  AUTO
+            <ToggleButton className='selected-auto' value={"auto"}>
+              <img src="./rocket-solid.svg" alt="Plane" />&nbsp;AUTO
             </ToggleButton>
           </StyledToggleButtonGroup>
         </Grid>
         {deliveryWay !== 'auto' &&
           <Grid container mb={3} mt={3}>
             <Grid item md={5}>
-              <InputLabel required>TRANSPORTATION BY</InputLabel>
+              <InputLabel  className='input-label' required>TRANSPORTATION BY</InputLabel>
               <Select
                 fullWidth
                 IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -197,7 +201,7 @@ function App() {
                       </ListSubheader>
                       :
                       <MenuItem key={item.name} value={item.name + " " + item.shortForm + " " + opt.icon} disabled={item.disabled} >
-                        <img className='svg-icon' src={opt.icon} alt="icon" />&nbsp;{item.name}<Typography component={'span'}>&nbsp;{item.shortForm}</Typography>
+                        &nbsp;&nbsp;&nbsp;<img className='svg-icon' src={opt.icon} alt="icon" />{item.name}<Typography component={'span'}>&nbsp;{item.shortForm}</Typography>
                       </MenuItem>
                   ))
                 })}
@@ -207,7 +211,7 @@ function App() {
         }
         <Grid container>
           <Grid item md={5}>
-            <InputLabel required>CONTAINER TYPE</InputLabel>
+            <InputLabel  className='input-label' required>CONTAINER TYPE</InputLabel>
             <Select
               fullWidth
               IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -251,6 +255,7 @@ function App() {
               onInputChange={(e) => { setInputValuefrom(e.target.value) }}
               onSelect={(item, country) => { setInputValuefrom(item?.name + ' ' + country) }}
               mapid={'frommap'}
+              onInputWheel={() => setInputValuefrom('')}
             />
           </Grid>
           <Grid item md={5} ml={4}>

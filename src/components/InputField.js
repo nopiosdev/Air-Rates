@@ -4,7 +4,7 @@ import React from 'react'
 const InputField = (props) => {
   return (
     <>
-      <InputLabel required={props.required ?? true}>{props.label}</InputLabel>
+      <InputLabel  className='input-label' required={props.required ?? true}>{props.label}</InputLabel>
       <TextField
         placeholder={props.placeholder}
         fullWidth
