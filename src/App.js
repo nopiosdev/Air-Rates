@@ -66,14 +66,6 @@ function App() {
         </Grid>
         <Typography variant='h6' mt={2} mb={3}>Cargo details</Typography>
         <Grid container>
-          {/* <Grid item md={9} mb={1}>
-            <Grid container >
-              <Grid item md={6}>
-              </Grid>
-              <Grid item md={6}>
-              </Grid>
-            </Grid>
-          </Grid> */}
           <Grid item md={9}>         
             <Box className="flex-box" mb={1}>
               <InputLabel className='input-label' required>PRODUCT</InputLabel>
@@ -172,7 +164,7 @@ function App() {
           </StyledToggleButtonGroup>
         </Grid>
         {deliveryWay !== 'auto' &&
-          <Grid container mb={3} mt={3}>
+          <Grid container mt={3}>
             <Grid item md={5}>
               <InputLabel  className='input-label' required>TRANSPORTATION BY</InputLabel>
               <Select
@@ -209,7 +201,7 @@ function App() {
             </Grid>
           </Grid>
         }
-        <Grid container>
+        <Grid container mt={3}>
           <Grid item md={5}>
             <InputLabel  className='input-label' required>CONTAINER TYPE</InputLabel>
             <Select
