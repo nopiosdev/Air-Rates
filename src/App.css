@@ -223,31 +223,76 @@
   box-shadow: 0 4px 15px rgba(58, 112, 191, .1);
   border-radius: 6px !important;
 }
-.MuiToggleButton-root{
+
+.MuiToggleButton-root {
   width: 92px !important;
   padding: 5px !important;
 }
-.Mui-selected.selected-sea{
+
+.Mui-selected.selected-sea {
   background-color: #eaf5ff !important;
 }
 
-.Mui-selected.selected-land{
+.Mui-selected.selected-land {
   background-color: #ddf8f6 !important;
 }
-.Mui-selected.selected-air{
+
+.Mui-selected.selected-air {
   background-color: #fff2f5 !important;
 }
-.Mui-selected.selected-auto{
+
+.Mui-selected.selected-auto {
   background-color: #e5e8ff !important;
 }
 
 
+.city-region {
+  margin: 0 !important;
+  font-size: 11.2px !important;
+  line-height: 15.2px !important;
+  font-weight: 500 !important;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.city-country {
+  color: #9fb1c1 !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+  margin-top: 5px !important;
+  padding-left: 25px !important;
+}
 
 
+.ports-list-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
 
+.ports-list {
+  height: 100%;
+  min-width: 232px;
+  flex-grow: 1;
+  margin-right: 10px;
+  max-height: 300px;
+}
 
+.ports-list-item {
+  font-family: "Montserrat", sans-serif;
+  color: #000c37;
+  width: 100%;
+  margin: 0;
+  padding: 8px;
+  border-radius: 4.8px;
+  height: 48px;
+}
 
-
+.map-container {
+  flex-grow: 1;
+  width: 320px;
+}
 
 
 
@@ -280,15 +325,15 @@ input:focus {
 }
 
 .autoselect {
-  width: 100%;
+  width: 600px;
   text-align: left;
   box-shadow: 0 0 4px 0 #ccc;
   margin-top: 5px;
+  box-shadow: 0 4px 15px rgba(58, 112, 191, .1);
 }
 
 .autoselect .autorow {
   padding: 8px;
-  display: flex;
   cursor: pointer;
 }
 
@@ -314,6 +359,28 @@ input:focus {
   width: 60%;
 }
 
+.autorow .city-country {
+  padding-left: 21px !important;
+}
+
 .loader {
-  padding: 10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
+  border-color: #a7a7a7 transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  margin: 10px;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

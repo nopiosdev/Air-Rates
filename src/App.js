@@ -1,14 +1,11 @@
 import './App.css';
-import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Chip, Paper, ToggleButton, Divider, ToggleButtonGroup, styled, ListSubheader, FormControl } from '@mui/material';
+import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Chip, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader } from '@mui/material';
 import { Box } from '@mui/system';
-import { useEffect, useReducer, useState } from 'react';
+import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { Container_Type, data, Transportion_Data } from './data';
-import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import TransportationMenu from './components/TransportationMenu';
 import InputField from './components/InputField';
-import { formReducer } from './utils/Globalfunction';
 import AutoComplete from './components/AutoComplete';
 
 function App() {
@@ -17,9 +14,6 @@ function App() {
   const [deliveryWay, setDeliveryWay] = useState(0);
   const [transportationType, setTransportationType] = useState("");
   const [containerType, setContainerType] = useState("");
-  const [formData, setFormData] = useReducer(formReducer, {});
-  const [inputvaluefrom, setInputValuefrom] = useState('');
-  const [inputvalueto, setInputValueto] = useState('');
 
   const handleDeliveryWay = (event, val) => {
     setTransportationType("");
@@ -66,7 +60,7 @@ function App() {
         </Grid>
         <Typography variant='h6' mt={2} mb={3}>Cargo details</Typography>
         <Grid container>
-          <Grid item md={9}>         
+          <Grid item md={9}>
             <Box className="flex-box" mb={1}>
               <InputLabel className='input-label' required>PRODUCT</InputLabel>
               <Typography sx={{ float: 'right' }}>HS Codes</Typography>
@@ -82,14 +76,6 @@ function App() {
                 setCommodityType(option)
               }}
               getOptionLabel={(option) => option.description + " " + option.code}
-              // getOptionLabel={(option) => {
-              //   return <div component="li" >
-              //     <span className={`commodity-icons ${option?.class}`} />
-              //     {option.description} {option.code && `(${option.code})`}
-              //   </div >
-              // }
-              // }
-
               renderOption={(props, option) => (
                 <Box component="li" {...props}>
                   <div className={`commodity-icons ${option?.class}`} />
@@ -166,7 +152,7 @@ function App() {
         {deliveryWay !== 'auto' &&
           <Grid container mt={3}>
             <Grid item md={5}>
-              <InputLabel  className='input-label' required>TRANSPORTATION BY</InputLabel>
+              <InputLabel className='input-label' required>TRANSPORTATION BY</InputLabel>
               <Select
                 fullWidth
                 IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -177,7 +163,6 @@ function App() {
                 }}
                 displayEmpty
                 renderValue={(selected) => {
-                  console.log('selected', selected)
                   if (!selected) {
                     return <Typography>Select type</Typography>;
                   } else {
@@ -203,7 +188,7 @@ function App() {
         }
         <Grid container mt={3}>
           <Grid item md={5}>
-            <InputLabel  className='input-label' required>CONTAINER TYPE</InputLabel>
+            <InputLabel className='input-label' required>CONTAINER TYPE</InputLabel>
             <Select
               fullWidth
               IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -214,7 +199,6 @@ function App() {
               }}
               displayEmpty
               renderValue={(selected) => {
-                console.log('selected', selected)
                 if (!selected) {
                   return <Typography>Container type</Typography>;
                 } else {
@@ -232,7 +216,6 @@ function App() {
               type={'number'}
               label="QUANTITY OF CONTAINERS"
               placeholder="0"
-              onChange={setFormData}
               name="qty"
             />
           </Grid>
@@ -242,22 +225,15 @@ function App() {
             <AutoComplete
               label={'From'}
               required={true}
-              Inputvalue={inputvaluefrom}
               Inputplaceholder={'City , Port'}
-              onInputChange={(e) => { setInputValuefrom(e.target.value) }}
-              onSelect={(item, country) => { setInputValuefrom(item?.name + ' ' + country) }}
               mapid={'frommap'}
-              onInputWheel={() => setInputValuefrom('')}
             />
           </Grid>
           <Grid item md={5} ml={4}>
             <AutoComplete
               label={'To'}
               required={true}
-              Inputvalue={inputvalueto}
               Inputplaceholder={'City , Port'}
-              onInputChange={(e) => { setInputValueto(e.target.value) }}
-              onSelect={(item, country) => { setInputValueto(item?.name + ' ' + country) }}
               mapid={'tomap'}
             />
           </Grid>

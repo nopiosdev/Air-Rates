@@ -1,106 +1,73 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import CommonService from '../Services/CommonService';
 import axios from "axios";
-import Loader from './Loader';
-import { Autocomplete, FormLabel, TextField } from "@mui/material";
+import { Autocomplete, Box, FormLabel, TextField } from "@mui/material";
 
-const AutoComplete = forwardRef((props, ref) => {
+const AutoComplete = (props, ref) => {
 
-    const [listdata, setListdata] = useState([]);
-    const [listnearbydata, setListNearBydata] = useState([]);
-    const [selectedcountry, setSelectedCountry] = useState();
+    const [listData, setListData] = useState([]);
+    const [value, setValue] = useState(null);
+
+    const [listNearByData, setListNearByData] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [disableClear, setDisableClear] = useState(false);
     const [showloader, setShowloader] = useState(false);
-    const [search, setSearch] = useState(true);
+    const [map, setMap] = useState(null);
 
-    let map;
-    let service;
-    let infowindow;
-
-    function createMarker(place) {
-        if (!place.geometry || !place.geometry.location) return;
-
-        const marker = new window.google.maps.Marker({
-            map,
-            position: place.geometry.location,
-        });
-        window.google.maps.event.addListener(marker, "click", () => {
-            infowindow.setContent(place.name || "");
-            infowindow.open(map);
-        });
-    }
-
-    const SearchPlaces = async () => {
+    const SearchPlaces = async (e) => {
         setShowloader(true)
-        await CommonService.GoolgePlaceSearch(props?.Inputvalue).then((res) => {
-            if (res != null) {
-                setShowloader(false)
-                setListdata(res)
-            }
-        })
+        await CommonService.GoolgePlaceSearch(e)
+            .then((res) => {
+                if (res != null) {
+                    setShowloader(false)
+                    setListData(res);
+                }
+            })
 
     }
 
-    useEffect(() => {
-        if (props.Inputvalue == '') {
-            setSearch(true)
+    function setMarkers(map, markers) {
+        var bounds = new window.google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+            console.log(markers[i])
+            var marker = new window.google.maps.Marker({
+                position: { lat: parseFloat(markers[i].lat), lng: parseFloat(markers[i].lng) },
+                map: map,
+            });
+            bounds.extend(marker.getPosition());
         }
-    }, [props.Inputvalue])
+        map.fitBounds(bounds);
+    }
 
-
-    useEffect(() => {
-        if (search == true) {
-            SearchPlaces()
-        }
-    }, [props.Inputvalue, search])
-
-
-
-    const onGeneratemap = async (item) => {
-
-        const center = new window.google.maps.LatLng(item?.lat, item?.lng);
-
-        infowindow = new window.google.maps.InfoWindow();
-        map = new window.google.maps.Map(document.getElementById(props?.mapid), {
+    const onGenerateMap = async (mainItem, items) => {
+        const center = new window.google.maps.LatLng(items[0]?.lat, items[0]?.lng);
+        var map = new window.google.maps.Map(document.getElementById(props?.mapid), {
             center: center,
             zoom: 15,
         });
-
-        const request = {
-            query: item?.name,
-            fields: ["name", "geometry"],
-        };
-
-        service = new window.google.maps.places.PlacesService(map);
-        service.findPlaceFromQuery(request, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-                for (let i = 0; i < results.length; i++) {
-                    createMarker(results[i]);
-                }
-                map.setCenter(results[0].geometry.location);
-
-            }
-        });
+        setMap(map);
+        setMarkers(map, [...items, mainItem])
     }
 
-
     const NearByplaces = async (item) => {
-        setSelectedCountry(item)
-        setSearch(false)
+        setSelectedCountry(item);
         const formData = new FormData();
         formData.append('input', item?.place_id)
         formData.append('type', 'place_id')
         formData.append('country_code', item?.code)
         formData.append('place_type', item?.place_type)
-
         const config = {
             headers: { 'content-type': 'multipart/form-data' }
         }
         axios.post('https://www.searates.com/search/google-geocode', formData, config)
             .then(response => {
-                setListdata([])
-                setListNearBydata(response?.data);
-                onGeneratemap(response?.data?.country_ports[0])
+                setListData([])
+                let temp = { ...item, ...response?.data?.results[0].geometry.location };
+                setSelectedCountry(temp)
+                setListNearByData(response?.data?.country_ports);
+                onGenerateMap(temp, response?.data?.country_ports)
+
             })
             .catch(error => {
                 console.log(error);
@@ -109,39 +76,77 @@ const AutoComplete = forwardRef((props, ref) => {
     }
 
     const onClear = () => {
-        setListdata([])
-        setListNearBydata([])
-        setShowloader(false)
-        setSelectedCountry()
+        if (!disableClear) {
+            setValue(null);
+            setListData([]);
+            setShowloader(false);
+            setListNearByData([]);
+            setSelectedCountry(null);
+        }
     }
 
-    console.log("listdata", listdata)
+    const handleOnSelect = (val) => {
+        setValue(val);
+        setSelectedCountry(null);
+    }
+
+    const moveToMarker = (item) => {
+        console.log(map);
+        const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
+        map.panTo(markerLatLng);
+    }
+
     return (
         <>
-            <FormLabel className='input-label ' required>{props.label}</FormLabel>
+            <FormLabel className='input-label' required>{props.label}</FormLabel>
             <Autocomplete
-                sx={{marginTop:'5px'}}
+                sx={{ marginTop: '5px' }}
                 freeSolo
                 fullWidth
-                options={[]}
+                value={value}
+                options={listNearByData.length > 0 ? listNearByData : listData}
                 autoHighlight
-                //   value={props.Inputvalue}
-                onChange={props.onInputChange}
-                getOptionLabel={(option) => option.description + " " + option.code}
-                // getOptionLabel={(option) => {
-                //   return <div component="li" >
-                //     <span className={`commodity-icons ${option?.class}`} />
-                //     {option.description} {option.code && `(${option.code})`}
-                //   </div >
-                // }
-                // }
-
+                onInputChange={(e, option) => {
+                    if (option) {
+                        if (listNearByData.length === 0) {
+                            SearchPlaces(option)
+                        }
+                    } else {
+                        setListNearByData([]);
+                        setListData([]);
+                        setSelectedCountry(null);
+                    }
+                }}
+                clearOnEscape={true}
+                onBlur={onClear}
+                clearOnBlur={!disableClear ? true : false}
+                filterSelectedOptions={true}
+                loading={showloader}
+                loadingText={<span className="loader" />}
+                getOptionLabel={(option) => {
+                    if (listNearByData.length === 0) {
+                        return option.city + " " + option.country
+                    } else if (option.name) {
+                        return option.name
+                    } else {
+                        return option
+                    }
+                }}
                 renderOption={(props, option) => (
-                    console.log(option)
-                    // <Box component="li" {...props}>
-                    //   <div className={`commodity-icons ${option?.class}`} />
-                    //   {option.description} {option.code && `(${option.code})`}
-                    // </Box>
+                    <div {...props}>
+                        <Box component="div" className="city-option-container" onClick={() => { NearByplaces(option) }}>
+                            <p className="city-region">
+                                <ReactCountryFlag
+                                    countryCode={option?.code}
+                                    style={{ width: 16, height: 16, marginRight: "10px" }}
+                                    svg
+                                    cdnSuffix="svg"
+                                />
+                                {option.city} {option.region}
+                            </p>
+                            <small className="city-country">{option.city} {option.country}</small>
+                        </Box>
+                    </div>
                 )}
                 renderInput={(params) => (
                     <TextField
@@ -150,98 +155,37 @@ const AutoComplete = forwardRef((props, ref) => {
                     />
                 )}
             />
+            {selectedCountry &&
+                <div className="autoselect" onMouseLeave={() => setDisableClear(false)}>
+                    <div className="customrow">
+                        <div className="placename">
+                            <Box component="div" className="autorow" onClick={() => handleOnSelect(`${selectedCountry.city} ${selectedCountry.country}`)} onMouseEnter={() => { setDisableClear(true); moveToMarker(selectedCountry); }}>
+                                <p className="city-region">
+                                    <img src="./building.svg" alt="Port" style={{ marginRight: '10px' }} />
+                                    {selectedCountry.city} {selectedCountry.region}
+                                </p>
+                                <small className="city-country">{selectedCountry.city} {selectedCountry.country}</small>
+                            </Box>
+                            {listNearByData.length > 0 && listNearByData?.map((item, index) => {
+                                return (
+                                    <Box key={`city_${index}`} component="div" className="autorow" onClick={() => handleOnSelect(`${item.name} ${selectedCountry.country}`)} onMouseEnter={() => { setDisableClear(true); moveToMarker(item); }}>
+                                        <p className="city-region">
+                                            <img src="./port.svg" alt="Port" style={{ marginRight: '10px' }} />
+                                            {item?.name}
+                                        </p>
+                                        <small className="city-country">{'Port of ' + selectedCountry?.country}</small>
+                                    </Box>
+                                )
+                            })}
+                        </div>
+                        <div className="placemap">
+                            <div style={selectedCountry && { height: 300 }} id={props?.mapid}></div>
+                        </div>
+                    </div>
+                </div>
+            }
         </>
-        // <div className="autocomplete">
-        //     <div className="label">
-        //         <h4 className="css-9npbnl-MuiFormLabel-root-MuiInputLabel-root">{props.label}
-        //             {props.required && <span className="css-wgai2y-MuiFormLabel-asterisk">*</span>} </h4>
-        //     </div>
-        //     <div className="auto-inputfield">
-        //         <input
-        //             ref={ref}
-        //             onPointerOut={props.onInputPointerOut}
-        //             onBlur={props.onInputBlur}
-        //             placeholder={props.Inputplaceholder}
-        //             type={'text'}
-        //             value={props.Inputvalue}
-        //             onChange={props.onInputChange}
-        //             onKeyDown={props.onInputKeyDown}
-        //             disabled={props.Inputdisabled}
-        //             min="1"
-        //             onFocus={props.onFocus}
-        //             style={props.Inputstyle}
-        //             defaultValue={props.InputdefaultValue}
-        //             onWheel={props.onInputWheel}
-        //             className={`input ${props.InputNewclassName}`}                    
-        //         />
-        //         <div className="googlemap">
-        //             <div className="autoselect">
-        //                 {showloader &&
-        //                     <Loader />
-        //                 }
-        //                 {listdata != '' && listdata?.map((item, index) => {
-        //                     return (
-        //                         <div className="autorow" key={index + 2} onClick={() => { NearByplaces(item) }}>
-        //                             <div className="icon">
-        //                                 <ReactCountryFlag
-        //                                     countryCode={item?.code}
-        //                                     style={{
-        //                                         width: 22,
-        //                                         height: 17,
-        //                                     }}
-        //                                     svg
-        //                                     cdnSuffix="svg"
-        //                                     aria-label={item?.country}
-        //                                 />
-        //                             </div>
-        //                             <div className="detail">
-        //                                 <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.city}</p>
-        //                                 <p style={{ fontSize: 13, color: '#999393' }}>{item?.city + ' ' + item?.country}</p>
-        //                             </div>
-        //                         </div>
-        //                     )
-        //                 })}
-        //                 <div className="customrow">
-        //                     <div className="placename">
-        //                         {listnearbydata != '' && listnearbydata?.country_ports?.map((item, index) => {
-        //                             return (
-        //                                 <div className="autorow" key={index + 2}
-        //                                     onMouseEnter={() => {
-        //                                         onGeneratemap(item);
-        //                                     }}
-        //                                     onClick={() => {
-        //                                         props.onSelect(item, selectedcountry?.country);
-        //                                         onClear()
-        //                                     }}
-        //                                 >
-        //                                     <div className="icon">
-        //                                         <ReactCountryFlag
-        //                                             countryCode={item?.country_code}
-        //                                             style={{
-        //                                                 width: 22,
-        //                                                 height: 17,
-        //                                             }}
-        //                                             svg
-        //                                             cdnSuffix="svg"
-        //                                         />
-        //                                     </div>
-        //                                     <div className="detail">
-        //                                         <p style={{ fontSize: 14, fontWeight: '600' }}>{item?.name}</p>
-        //                                         <p style={{ fontSize: 13, color: '#999393' }}>{'Port of' + ' ' + selectedcountry?.country}</p>
-        //                                     </div>
-        //                                 </div>
-        //                             )
-        //                         })}
-        //                     </div>
-        //                     <div className="placemap">
-        //                         <div style={selectedcountry && { height: 300 }} id={props?.mapid}></div>
-        //                     </div>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
     )
-});
+}
 
 export default AutoComplete
