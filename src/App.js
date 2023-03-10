@@ -1,24 +1,34 @@
 import './App.css';
-import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Chip, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader } from '@mui/material';
-import { Box } from '@mui/system';
-import { useState } from 'react';
+import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider, IconButton } from '@mui/material';
+import { useReducer, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import { Container_Type, data, Transportion_Data } from './data';
+import { Container_Type, data, IMO_CLASS, Transportion_Data } from './data';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import InputField from './components/InputField';
-import AutoComplete from './components/AutoComplete';
+import LocationAutoComplete from './components/LocationAutoComplete';
+import Calendar from './components/Calendar';
+import { formReducer } from './utils/Globalfunction';
+import CustomChip from './components/CustomChip';
+import Popover from './components/Popover';
+import CheckBox from './components/CheckBox';
+import CustomButton from './components/CustomButton';
+import SelectDropDown from './components/SelectDropDown';
+import CustomInputField from './components/CustomInputField';
+import { PlaneIcon } from './components/Icons';
+
 
 function App() {
-  const [metricState, setMetricState] = useState("International (SI)");
-  const [commodityType, setCommodityType] = useState(null);
-  const [deliveryWay, setDeliveryWay] = useState(0);
+
+  const [deliveryWay, setDeliveryWay] = useState(1);
   const [transportationType, setTransportationType] = useState("");
-  const [containerType, setContainerType] = useState("");
+  const [formData, setFormData] = useReducer(formReducer, {});
+
 
   const handleDeliveryWay = (event, val) => {
-    setTransportationType("");
-    setContainerType("");
-    setDeliveryWay(val);
+    if (val) {
+      setTransportationType("");
+      setDeliveryWay(val);
+    }
   };
 
   const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
@@ -34,7 +44,26 @@ function App() {
       },
     },
   }));
-
+  const handleCargoType = (cargoType) => {
+    if (formData["cargo-type"] === cargoType) {
+      let item = {
+        target: {
+          name: "cargo-type",
+          value: null
+        }
+      }
+      setFormData(item);
+    } else {
+      let item = {
+        target: {
+          name: "cargo-type",
+          value: cargoType
+        }
+      }
+      setFormData(item);
+    }
+  }
+  console.log("formData", formData)
   return (
     <Container>
       <Box className='layout'>
@@ -47,15 +76,14 @@ function App() {
             <Typography className='headline' mt={2}>And get the best rates from the leading logistics providers.</Typography>
           </Grid>
           <Grid item md={2}>
-            <Select
-              value={metricState}
-              onChange={(e) => setMetricState(e.target.value)}
-              fullWidth
+            <SelectDropDown
+              icon={(props) => <KeyboardArrowDownIcon {...props} />}
+              value={formData['metricState'] ?? "International (SI)"}
               className='metric-select'
-            >
-              <MenuItem value={"International (SI)"}>International (SI)</MenuItem>
-              <MenuItem value={"Imperial (US)"}>Imperial (US)</MenuItem>
-            </Select>
+              name="metricState"
+              onChange={setFormData}
+              data={["International (SI)", "Imperial (US)"]}
+            />
           </Grid>
         </Grid>
         <Typography variant='h6' mt={2} mb={3}>Cargo details</Typography>
@@ -71,9 +99,15 @@ function App() {
               options={data}
               autoHighlight
               className='img-select'
-              value={commodityType}
+              value={formData['commodityType']}
               onChange={(e, option) => {
-                setCommodityType(option)
+                let item = {
+                  target: {
+                    name: "commodityType",
+                    value: option?.description
+                  }
+                }
+                setFormData(item);
               }}
               getOptionLabel={(option) => option.description + " " + option.code}
               renderOption={(props, option) => (
@@ -98,16 +132,99 @@ function App() {
                 />
               )}
             />
-            {commodityType &&
+            {formData['commodityType'] &&
               <Box mt={2}>
-                <Chip avatar={<div className={`commodity-icons _25`} />} label="Hazardous cargo" variant="standard" />
-                <Chip avatar={<div className={`commodity-icons _26`} />} label="Perishable cargo" variant="standard" />
-                <Chip avatar={<div className={`commodity-icons _27`} />} label="Oversized cargo" variant="standard" />
-                <Chip avatar={<div className={`commodity-icons _28`} />} label="Liquid cargo" variant="standard" />
+                <CustomChip className={formData['cargo-type'] === "hazardous" ? "active-chip" : ""} onClick={() => handleCargoType("hazardous")} avatar={<div className={`commodity-icons _25`} />} label="Hazardous cargo" />
+                <CustomChip className={formData['cargo-type'] === "perishable" ? "active-chip" : ""} onClick={() => handleCargoType("perishable")} avatar={<div className={`commodity-icons _26`} />} label="Perishable cargo" />
+                <CustomChip className={formData['cargo-type'] === "oversized" ? "active-chip" : ""} onClick={() => handleCargoType("oversized")} avatar={<div className={`commodity-icons _27`} />} label="Oversized cargo" />
+                <CustomChip className={formData['cargo-type'] === "liquid" ? "active-chip" : ""} onClick={() => handleCargoType("liquid")} avatar={<div className={`commodity-icons _28`} />} label="Liquid cargo" />
               </Box>
             }
           </Grid>
         </Grid>
+        {(formData['cargo-type'] === "hazardous" && formData['commodityType']) &&
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <SelectDropDown
+                icon={(props) => <KeyboardArrowDownIcon {...props} />}
+                value={formData['imo']}
+                name="imo"
+                onChange={setFormData}
+                placeholder="Imo class"
+                label="IMO CLASS"
+                data={IMO_CLASS}
+              />
+            </Grid>
+            <Grid item md={5} ml={4}>
+              <InputField
+                type={'text'}
+                inputlabel="UN NUMBER"
+                placeholder="0"
+                name="unnum"
+                value={formData['unnum']}
+                onChange={setFormData}
+              />
+            </Grid>
+          </Grid>
+        }
+        {(formData['cargo-type'] === "oversized" && formData['commodityType']) &&
+          <Grid container mt={3}>
+            <Grid item md={2.5}>
+              <CustomInputField
+                btnText="m"
+                placeholder="0"
+                name="length"
+                onChange={setFormData}
+                value={formData['length']}
+                inputlabel="LENGTH"
+              />
+            </Grid>
+            <Grid item md={2.5}>
+              <CustomInputField
+                btnText="m"
+                placeholder="0"
+                name="width"
+                onChange={setFormData}
+                value={formData['width']}
+                inputlabel="WIDTH"
+              />
+            </Grid>
+            <Grid item md={2.5}>
+              <CustomInputField
+                btnText="m"
+                placeholder="0"
+                name="height"
+                onChange={setFormData}
+                value={formData['height']}
+                inputlabel="HEIGHT"
+              />
+            </Grid>
+          </Grid>
+        }
+        {(formData['cargo-type'] === "perishable" && formData['commodityType']) &&
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <InputLabel className='input-label'>TEMPERATURE REGIME</InputLabel>
+              <Paper
+                component="form"
+                className="custom-inputField custom-select"
+              >
+                <InputBase
+                  sx={{ ml: 1, flex: 2 }}
+                  placeholder="0"
+                  onChange={setFormData}
+                  value={formData['temperature']}
+                  name="temperature"
+                />
+                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                <TextField onChange={setFormData} value={formData['degree']} name="degree" sx={{ ml: 1, flex: 1 }} id="select" select>
+                  <MenuItem value="C"><sup>o</sup>C</MenuItem>
+                  <MenuItem value="F"><sup>o</sup>F</MenuItem>
+                </TextField>
+              </Paper>
+            </Grid>
+          </Grid>
+        }
         <Typography variant='h6' mt={7} mb={3}>Delivery</Typography>
         <Grid container>
           <Grid item md={3}>
@@ -126,14 +243,14 @@ function App() {
                 exclusive
                 onChange={handleDeliveryWay}
               >
-                <ToggleButton className='selected-sea' value={0}>
+                <ToggleButton className='selected-sea' value={1}>
                   <img src="./boat.svg" alt="Plane" />&nbsp;SEA
                 </ToggleButton>
-                <ToggleButton className='selected-land' value={1}>
+                <ToggleButton className='selected-land' value={2}>
                   <img src="./road-solid.svg" alt="Plane" />&nbsp;LAND
                 </ToggleButton>
-                <ToggleButton className='selected-air' value={2}>
-                  <img src="./plane-solid.svg" alt="Plane" />&nbsp;AIR
+                <ToggleButton className='selected-air' value={3}>
+                  <PlaneIcon />&nbsp;AIR
                 </ToggleButton>
               </StyledToggleButtonGroup>
             </Paper>
@@ -170,7 +287,7 @@ function App() {
                   }
                 }}
               >
-                {Transportion_Data[deliveryWay].options.map((opt) => {
+                {Transportion_Data[deliveryWay - 1]?.options?.map((opt) => {
                   return opt.suboptions.map(item => (
                     item.title ?
                       <ListSubheader>
@@ -188,41 +305,30 @@ function App() {
         }
         <Grid container mt={3}>
           <Grid item md={5}>
-            <InputLabel className='input-label' required>CONTAINER TYPE</InputLabel>
-            <Select
-              fullWidth
-              IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
-              value={containerType}
-              onChange={(e, val) => {
-                console.log(e)
-                setContainerType(e.target.value);
-              }}
-              displayEmpty
-              renderValue={(selected) => {
-                if (!selected) {
-                  return <Typography>Container type</Typography>;
-                } else {
-                  return <Typography>{selected}</Typography>
-                }
-              }}
-            >
-              {Container_Type.map((item) => (
-                <MenuItem key={item} value={item}>{item}</MenuItem>
-              ))}
-            </Select>
+            <SelectDropDown
+              label="CONTAINER TYPE"
+              icon={(props) => <KeyboardArrowDownIcon {...props} />}
+              value={formData['containerType']}
+              name="containerType"
+              onChange={setFormData}
+              placeholder="Container type"
+              data={Container_Type}
+            />
           </Grid>
           <Grid item md={5} ml={4}>
             <InputField
               type={'number'}
-              label="QUANTITY OF CONTAINERS"
+              inputlabel="QUANTITY OF CONTAINERS"
               placeholder="0"
               name="qty"
+              value={formData['qty']}
+              onChange={setFormData}
             />
           </Grid>
         </Grid>
         <Grid container mt={3}>
           <Grid item md={5}>
-            <AutoComplete
+            <LocationAutoComplete
               label={'From'}
               required={true}
               Inputplaceholder={'City , Port'}
@@ -230,12 +336,87 @@ function App() {
             />
           </Grid>
           <Grid item md={5} ml={4}>
-            <AutoComplete
+            <LocationAutoComplete
               label={'To'}
               required={true}
               Inputplaceholder={'City , Port'}
               mapid={'tomap'}
             />
+          </Grid>
+        </Grid>
+        <Grid container mt={3}>
+          <Grid item md={5}>
+            <Calendar
+              value={formData['readytoload']}
+              onChange={setFormData}
+              label="READY TO LOAD"
+              placeholder="Select"
+              name="readytoload"
+            />
+          </Grid>
+        </Grid>
+        <Grid container mt={3}>
+          <Grid item md={9}>
+            <InputField
+              multiline={true}
+              type={'text'}
+              inputlabel="ADDITIONAL INFORMATION"
+              placeholder="Write a message..."
+              name="info"
+              value={formData['info']}
+              onChange={setFormData}
+              minRows={2}
+            />
+          </Grid>
+        </Grid>
+        <Typography variant='h6' mt={7} mb={3}>Associated services</Typography>
+        <Box mt={2} className="associated-services">
+          <Popover title={"Add cargo insurance to your shipment to stay safe from any accidents."} >
+            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _29`} /></>} label="Insurance" />
+          </Popover>
+          <Popover title={"Order an inspection or tally service by checking this one."} >
+            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _30`} /></>} label="Inspection services" />
+          </Popover>
+          <Popover title={"For different type of commodities and specific local requirements, we will help you to get phytosanitary, radiology, veterinary and other types of certificates."} >
+            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _31`} /></>} label="Certification" />
+          </Popover>
+          <Popover title={"Select this item if you need customs brokerage service."} >
+            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _32`} /></>} label="Customs clearance" />
+          </Popover>
+        </Box>
+        <Typography variant='h6' mt={7} mb={3}>СARGOES Finance</Typography>
+        <Alert
+          severity="info"
+          iconMapping={{
+            info: <CheckBox />,
+          }}
+        >
+          <AlertTitle>I am interested in accessing Trade, Logistics or Invetory Finance</AlertTitle>
+          <div><img src="./cargo.svg" alt="" style={{ float: 'right' }} /></div>
+          CARGOES Finance provides access to finance for exporters, importers and logistics companies across the globe for receivables and payables
+        </Alert>
+        <Typography variant='h6' mt={7} mb={3}>Contact details</Typography>
+        <Grid container mt={3}>
+          <Grid item md={4}>
+            <InputField
+              type={'text'}
+              inputlabel="PHONE"
+              placeholder="(000) 000 000"
+              name="info"
+              value={formData['info']}
+              onChange={setFormData}
+            />
+          </Grid>
+        </Grid>
+        <Grid container mt={6} spacing={4}>
+          <Grid item md={3}>
+            <CustomButton
+              title="Send"
+              onClick={() => { }}
+            />
+          </Grid>
+          <Grid item md={8}>
+            <Typography component={"p"}>By clicking Send, you agree with our <Typography component={"a"}>Terms & conditions.</Typography></Typography>
           </Grid>
         </Grid>
       </Box>

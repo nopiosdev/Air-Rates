@@ -4,7 +4,7 @@ import CommonService from '../Services/CommonService';
 import axios from "axios";
 import { Autocomplete, Box, FormLabel, TextField } from "@mui/material";
 
-const AutoComplete = (props, ref) => {
+const LocationAutoComplete = (props, ref) => {
 
     const [listData, setListData] = useState([]);
     const [value, setValue] = useState(null);
@@ -87,11 +87,13 @@ const AutoComplete = (props, ref) => {
 
     const handleOnSelect = (val) => {
         setValue(val);
+        setListData([]);
+        setListNearByData([]);
         setSelectedCountry(null);
     }
 
     const moveToMarker = (item) => {
-        console.log(map);
+        console.log("item",item);
         const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
         map.panTo(markerLatLng);
     }
@@ -124,7 +126,7 @@ const AutoComplete = (props, ref) => {
                 loading={showloader}
                 loadingText={<span className="loader" />}
                 getOptionLabel={(option) => {
-                    if (listNearByData.length === 0) {
+                    if (listNearByData.length === 0 && option.city) {
                         return option.city + " " + option.country
                     } else if (option.name) {
                         return option.name
@@ -188,4 +190,4 @@ const AutoComplete = (props, ref) => {
     )
 }
 
-export default AutoComplete
+export default LocationAutoComplete

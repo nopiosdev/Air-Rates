@@ -239,3 +239,27 @@ export const Container_Type = [
     "45' High-Cube",
     "10' Standard"
 ]
+
+export const IMO_CLASS = [
+    "1.1 Explosives with a mass explosion hazard",
+    "1.2 Explosives with a severe projection hazard",
+    "1.3 Explosives with a fire",
+    "1.4 Minor fire or projection hazard",
+    "1.5 An insensitive substance with a mass explosion hazard",
+    "1.6 Extremely insensitive articles",
+    "2.1 Flammable Gas",
+    "2.2 Non-flammable, Non-poisonus Gas",
+    "2.3 Oxygen Gas",
+    "2.4 Poison Gas",
+    "3 Flammable Liquid",
+    "4.1 Flammable Solids or Substances",
+    "4.2 Flammable solids",
+    "4.3 Substances which, in contact with water, emit flammable gases",
+    "5.1 Oxidizing substances (agents) by yielding oxygen increase the risk and intensity of fire",
+    "5.2 Organic peroxides - most will burn rapidly and are sensitive to impact or friction",
+    "6.1 Toxic substances",
+    "6.2 Infectious substances",
+    "7 Radioactive Substances",
+    "8 Corrosives",
+    "9 Miscellaneous dangerous substances and articles"
+]
