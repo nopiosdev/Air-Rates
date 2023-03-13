@@ -1,8 +1,8 @@
 import './App.css';
-import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider, IconButton } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider } from '@mui/material';
+import React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import { Container_Type, data, IMO_CLASS, Transportion_Data } from './data';
+import { CONTAINER_TYPE, data, IMO_CLASS, SHIPPING_TYPE, TRANSPORTATION_DATA, TRUCK_TYPE, WAGON_TYPE } from './data';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import InputField from './components/InputField';
 import LocationAutoComplete from './components/LocationAutoComplete';
@@ -14,22 +14,13 @@ import CheckBox from './components/CheckBox';
 import CustomButton from './components/CustomButton';
 import SelectDropDown from './components/SelectDropDown';
 import CustomInputField from './components/CustomInputField';
-import { PlaneIcon } from './components/Icons';
+import { BoatIcon, PlaneIcon, RoadIcon, RocketIcon, TruckIcon, WagonIcon } from './components/Icons';
+import ByUnits from './components/ByUnits';
 
 
 function App() {
 
-  const [deliveryWay, setDeliveryWay] = useState(1);
-  const [transportationType, setTransportationType] = useState("");
-  const [formData, setFormData] = useReducer(formReducer, {});
-
-
-  const handleDeliveryWay = (event, val) => {
-    if (val) {
-      setTransportationType("");
-      setDeliveryWay(val);
-    }
-  };
+  const [formData, setFormData] = React.useReducer(formReducer, {});
 
   const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     '& .MuiToggleButtonGroup-grouped': {
@@ -44,6 +35,27 @@ function App() {
       },
     },
   }));
+  const handleDeliveryWay = (event) => {
+    if (event.target.value) {
+      let items = [
+        {
+          target: {
+            name: "transportationType",
+            value: event.target.value === "1" ? "Full container load FCL" : null
+          }
+        },
+        {
+          target: {
+            name: "optIcon",
+            value: null
+          }
+        }
+      ]
+      items.map(x => setFormData(x));
+      clearFormData();
+      setFormData(event);
+    }
+  };
   const handleCargoType = (cargoType) => {
     if (formData["cargo-type"] === cargoType) {
       let item = {
@@ -63,6 +75,158 @@ function App() {
       setFormData(item);
     }
   }
+  const getIcon = (name, className) => {
+    if (name === "boat") {
+      return <BoatIcon active={"1"} className={className ?? ""} />
+    }
+    if (name === "truck") {
+      return <TruckIcon className={className ?? ""} />
+    }
+    if (name === "wagon") {
+      return <WagonIcon className={className ?? ""} />
+    }
+    if (name === "plane") {
+      return <PlaneIcon active={"3"} className={className ?? ""} />
+    }
+  }
+  const handleOnOptClick = (optIcon) => {
+    let item = {
+      target: {
+        name: "optIcon",
+        value: optIcon
+      }
+    }
+    setFormData(item);
+  }
+  const handleOnByUnitsClick = (e) => {
+    let item = [
+      {
+        target: {
+          name: "weight",
+          value: null
+        }
+      },
+      {
+        target: {
+          name: "volume",
+          value: null
+        }
+      }]
+    item.map(x => setFormData(x));
+    setFormData(e);
+  }
+  const handleTransportationType = (e) => {
+    setFormData(e);
+    clearFormData();
+  }
+  const clearFormData = () => {
+    let items = [
+      {
+        target: {
+          name: "byUnits",
+          value: false
+        }
+      },
+      {
+        target: {
+          name: "shipType",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "grossWeight",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "loadingRate",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "dischargingRate",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "containerType",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "qty",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "truckType",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "qtyOfTrucks",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "wagonType",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "qtyOfWagons",
+          value: ""
+        }
+      }
+
+    ];
+    items.map(x => setFormData(x));
+  }
+  React.useEffect(() => {
+    let items = [
+      {
+        target: {
+          name: "deliveryWay",
+          value: '1'
+        }
+      },
+      {
+        target: {
+          name: "transportationType",
+          value: 'Full container load FCL'
+        }
+      },
+      {
+        target: {
+          name: "optIcon",
+          value: 'boat'
+        }
+      },
+      {
+        target: {
+          name: "dimensions",
+          value: [
+            {
+              height: 0,
+              width: 0,
+              length: 0
+            }
+          ]
+        }
+      }
+    ]
+    items.map(x => setFormData(x));
+  }, [])
+
   console.log("formData", formData)
   return (
     <Container>
@@ -133,7 +297,7 @@ function App() {
               )}
             />
             {formData['commodityType'] &&
-              <Box mt={2}>
+              <Box mt={3}>
                 <CustomChip className={formData['cargo-type'] === "hazardous" ? "active-chip" : ""} onClick={() => handleCargoType("hazardous")} avatar={<div className={`commodity-icons _25`} />} label="Hazardous cargo" />
                 <CustomChip className={formData['cargo-type'] === "perishable" ? "active-chip" : ""} onClick={() => handleCargoType("perishable")} avatar={<div className={`commodity-icons _26`} />} label="Perishable cargo" />
                 <CustomChip className={formData['cargo-type'] === "oversized" ? "active-chip" : ""} onClick={() => handleCargoType("oversized")} avatar={<div className={`commodity-icons _27`} />} label="Oversized cargo" />
@@ -239,63 +403,87 @@ function App() {
               <StyledToggleButtonGroup
                 size="small"
                 sx={{ width: '100%' }}
-                value={deliveryWay}
+                value={formData['deliveryWay']}
                 exclusive
                 onChange={handleDeliveryWay}
               >
-                <ToggleButton className='selected-sea' value={1}>
-                  <img src="./boat.svg" alt="Plane" />&nbsp;SEA
+                <ToggleButton name="deliveryWay" className='selected-sea' value={'1'}>
+                  <BoatIcon active={formData['deliveryWay']} />&nbsp;SEA
                 </ToggleButton>
-                <ToggleButton className='selected-land' value={2}>
-                  <img src="./road-solid.svg" alt="Plane" />&nbsp;LAND
+                <ToggleButton name="deliveryWay" className='selected-land' value={'2'}>
+                  <RoadIcon active={formData['deliveryWay']} />&nbsp;LAND
                 </ToggleButton>
-                <ToggleButton className='selected-air' value={3}>
-                  <PlaneIcon />&nbsp;AIR
+                <ToggleButton name="deliveryWay" className='selected-air' value={'3'}>
+                  <PlaneIcon active={formData['deliveryWay']} />&nbsp;AIR
                 </ToggleButton>
               </StyledToggleButtonGroup>
             </Paper>
           </Grid>
           <StyledToggleButtonGroup
             size="small"
-            value={deliveryWay}
+            value={formData['deliveryWay']}
             exclusive
             onChange={handleDeliveryWay}
           >
-            <ToggleButton className='selected-auto' value={"auto"}>
-              <img src="./rocket-solid.svg" alt="Plane" />&nbsp;AUTO
+            <ToggleButton name="deliveryWay" className='selected-auto' value={"auto"}>
+              <RocketIcon active={formData['deliveryWay']} />&nbsp;AUTO
             </ToggleButton>
           </StyledToggleButtonGroup>
         </Grid>
-        {deliveryWay !== 'auto' &&
+        {formData['deliveryWay'] === 'auto' ?
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <CustomInputField
+                btnText="mt"
+                placeholder="Weight"
+                name="weight"
+                onChange={setFormData}
+                value={formData['weight']}
+                inputlabel="WEIGHT"
+                required={true}
+              />
+            </Grid>
+            <Grid item md={5} ml={4}>
+              <CustomInputField
+                supText="3"
+                btnText={"m"}
+                placeholder="Volume"
+                name="volume"
+                onChange={setFormData}
+                value={formData['volume']}
+                inputlabel="VOLUME"
+                required={true}
+              />
+            </Grid>
+          </Grid>
+          :
           <Grid container mt={3}>
             <Grid item md={5}>
               <InputLabel className='input-label' required>TRANSPORTATION BY</InputLabel>
               <Select
                 fullWidth
-                IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
-                value={transportationType}
-                onChange={(e, val) => {
-                  console.log(e)
-                  setTransportationType(e.target.value);
-                }}
                 displayEmpty
+                IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
+                value={formData["transportationType"] ?? ""}
+                name="transportationType"
+                onChange={(e) => handleTransportationType(e)}
                 renderValue={(selected) => {
                   if (!selected) {
                     return <Typography>Select type</Typography>;
                   } else {
-                    return <Typography><img src={selected.split('./')[1]} alt="icon" />&nbsp;{selected.split('./')[0]}</Typography>
+                    return <Typography>{getIcon(formData['optIcon'])}&nbsp;&nbsp;&nbsp;{selected.split('/')[0]}</Typography>
                   }
                 }}
               >
-                {Transportion_Data[deliveryWay - 1]?.options?.map((opt) => {
+                {TRANSPORTATION_DATA[Number(formData['deliveryWay']) - 1]?.options?.map((opt) => {
                   return opt.suboptions.map(item => (
                     item.title ?
                       <ListSubheader>
-                        <img src={opt.icon} alt="icon" />&nbsp;{item.title}
+                        {getIcon(opt.icon)}&nbsp;{item.title}
                       </ListSubheader>
                       :
-                      <MenuItem key={item.name} value={item.name + " " + item.shortForm + " " + opt.icon} disabled={item.disabled} >
-                        &nbsp;&nbsp;&nbsp;<img className='svg-icon' src={opt.icon} alt="icon" />{item.name}<Typography component={'span'}>&nbsp;{item.shortForm}</Typography>
+                      <MenuItem onClick={() => handleOnOptClick(opt.icon)} key={item.name} value={`${item.name}${item.shortForm ? " " + item.shortForm : ""}`} disabled={item.disabled} >
+                        &nbsp;&nbsp;&nbsp;{getIcon(opt.icon, "svg-icon")}{item.name}<Typography component={'span'}>&nbsp;{item.shortForm}</Typography>
                       </MenuItem>
                   ))
                 })}
@@ -303,29 +491,184 @@ function App() {
             </Grid>
           </Grid>
         }
-        <Grid container mt={3}>
-          <Grid item md={5}>
-            <SelectDropDown
-              label="CONTAINER TYPE"
-              icon={(props) => <KeyboardArrowDownIcon {...props} />}
-              value={formData['containerType']}
-              name="containerType"
-              onChange={setFormData}
-              placeholder="Container type"
-              data={Container_Type}
-            />
+        {(formData["transportationType"] === "Full container load FCL" || formData["transportationType"] === "ULD container") &&
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <SelectDropDown
+                label="CONTAINER TYPE"
+                icon={(props) => <KeyboardArrowDownIcon {...props} />}
+                value={formData['containerType'] ?? ""}
+                name="containerType"
+                onChange={setFormData}
+                placeholder="Container type"
+                data={CONTAINER_TYPE}
+              />
+            </Grid>
+            <Grid item md={5} ml={4}>
+              <InputField
+                type={'number'}
+                inputlabel="QUANTITY OF CONTAINERS"
+                placeholder="0"
+                name="qty"
+                value={formData['qty']}
+                onChange={setFormData}
+              />
+            </Grid>
           </Grid>
-          <Grid item md={5} ml={4}>
-            <InputField
-              type={'number'}
-              inputlabel="QUANTITY OF CONTAINERS"
-              placeholder="0"
-              name="qty"
-              value={formData['qty']}
-              onChange={setFormData}
-            />
+        }
+        {(formData["transportationType"] === "Less container load LCL" || formData["transportationType"] === "Less truck load LTL" || formData["transportationType"] === "Standard cargo") &&
+          <>
+            <Grid container mt={3}>
+              <Grid item xs={12}>
+                <CheckBox
+                  label="By units"
+                  name="byUnits"
+                  checked={formData["byUnits"]}
+                  onChange={handleOnByUnitsClick}
+                />
+              </Grid>
+            </Grid>
+            {formData["byUnits"] === true ?
+              <ByUnits
+                onChange={setFormData}
+                onHeightChange={setFormData}
+                onLengthChange={setFormData}
+                onQunatityChange={setFormData}
+                onGrossWeightChange={setFormData}
+                dimensions={formData['dimensions']}
+                value={formData['dimenionsWidth']}
+                height={formData['dimenionsHeight']}
+                length={formData['dimenionsLength']}
+                quantity={formData['quantity']}
+                grossWeight={formData['grossWeight']}
+              />
+              :
+              <Grid container mt={3}>
+                <Grid item md={5}>
+                  <CustomInputField
+                    btnText="mt"
+                    placeholder="Weight"
+                    name="weight"
+                    onChange={setFormData}
+                    value={formData['weight']}
+                    inputlabel="WEIGHT"
+                    required={true}
+                  />
+                </Grid>
+                <Grid item md={5} ml={4}>
+                  <CustomInputField
+                    supText="3"
+                    btnText={"m"}
+                    placeholder="Volume"
+                    name="volume"
+                    onChange={setFormData}
+                    value={formData['volume']}
+                    inputlabel="VOLUME"
+                    required={true}
+                  />
+                </Grid>
+              </Grid>
+            }
+          </>
+        }
+        {formData["transportationType"] === "Bulk" &&
+          <>
+            <Grid container mt={3}>
+              <Grid item md={5}>
+                <SelectDropDown
+                  label="SHIP TYPE"
+                  icon={(props) => <KeyboardArrowDownIcon {...props} />}
+                  value={formData['shipType'] ?? ""}
+                  name="shipType"
+                  onChange={setFormData}
+                  placeholder="Shippping type"
+                  data={SHIPPING_TYPE}
+                />
+              </Grid>
+              <Grid item md={5} ml={4}>
+                <CustomInputField
+                  btnText="mt"
+                  name="grossWeight"
+                  onChange={setFormData}
+                  value={formData["grossWeight"]}
+                  inputlabel="GROSS WEIGHT"
+                  required={true}
+                />
+              </Grid>
+            </Grid>
+            <Grid container mt={3}>
+              <Grid item md={5}>
+                <CustomInputField
+                  btnText="mt/day"
+                  name="loadingRate"
+                  onChange={setFormData}
+                  value={formData["loadingRate"]}
+                  inputlabel="LOADING RATE"
+                />
+              </Grid>
+              <Grid item md={5} ml={4}>
+                <CustomInputField
+                  btnText="mt/day"
+                  name="dischargingRate"
+                  onChange={setFormData}
+                  value={formData["dischargingRate"]}
+                  inputlabel="DISCHARGING RATE"
+                  required={true}
+                />
+              </Grid>
+            </Grid>
+          </>
+        }
+        {formData["transportationType"] === "Full truck load FTL" &&
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <SelectDropDown
+                label="TRUCK TYPE"
+                icon={(props) => <KeyboardArrowDownIcon {...props} />}
+                value={formData['truckType'] ?? ""}
+                name="truckType"
+                onChange={setFormData}
+                placeholder="Truck type"
+                data={TRUCK_TYPE}
+              />
+            </Grid>
+            <Grid item md={5} ml={4}>
+              <InputField
+                type={'number'}
+                inputlabel="QUANTITY OF TRUCKS"
+                placeholder="0"
+                name="qtyOfTrucks"
+                value={formData['qtyOfTrucks']}
+                onChange={setFormData}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+        }
+        {formData["transportationType"] === "Full wagon load FWL" &&
+          <Grid container mt={3}>
+            <Grid item md={5}>
+              <SelectDropDown
+                label="WAGON TYPE"
+                icon={(props) => <KeyboardArrowDownIcon {...props} />}
+                value={formData['wagonType'] ?? ""}
+                name="wagonType"
+                onChange={setFormData}
+                placeholder="Wagon type"
+                data={WAGON_TYPE}
+              />
+            </Grid>
+            <Grid item md={5} ml={4}>
+              <InputField
+                type={'number'}
+                inputlabel="QUANTITY OF WAGONS"
+                placeholder="0"
+                name="qtyOfWagons"
+                value={formData['qtyOfWagons']}
+                onChange={setFormData}
+              />
+            </Grid>
+          </Grid>
+        }
         <Grid container mt={3}>
           <Grid item md={5}>
             <LocationAutoComplete
@@ -372,23 +715,84 @@ function App() {
         <Typography variant='h6' mt={7} mb={3}>Associated services</Typography>
         <Box mt={2} className="associated-services">
           <Popover title={"Add cargo insurance to your shipment to stay safe from any accidents."} >
-            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _29`} /></>} label="Insurance" />
+            <CustomChip
+              onClick={() => {
+                let item = {
+                  target: {
+                    name: "insurance",
+                    value: formData["insurance"] === true ? false : true
+                  }
+                }
+                setFormData(item);
+              }}
+              avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>} label="Insurance"
+            />
           </Popover>
           <Popover title={"Order an inspection or tally service by checking this one."} >
-            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _30`} /></>} label="Inspection services" />
+            <CustomChip
+              onClick={() => {
+                let item = {
+                  target: {
+                    name: "inspection-services",
+                    value: formData["inspection-services"] === true ? false : true
+                  }
+                }
+                setFormData(item);
+              }}
+              avatar={<><CheckBox name="inspection-services" checked={formData["inspection-services"]} onChange={setFormData} /><div className={`commodity-icons _30`} /></>}
+              label="Inspection services"
+            />
           </Popover>
           <Popover title={"For different type of commodities and specific local requirements, we will help you to get phytosanitary, radiology, veterinary and other types of certificates."} >
-            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _31`} /></>} label="Certification" />
+            <CustomChip
+              onClick={() => {
+                let item = {
+                  target: {
+                    name: "certification",
+                    value: formData["certification"] === true ? false : true
+                  }
+                }
+                setFormData(item);
+              }}
+              avatar={<><CheckBox name="certification" checked={formData["certification"]} onChange={setFormData} /><div className={`commodity-icons _31`} /></>} label="Certification"
+            />
           </Popover>
           <Popover title={"Select this item if you need customs brokerage service."} >
-            <CustomChip avatar={<><CheckBox /><div className={`commodity-icons _32`} /></>} label="Customs clearance" />
+            <CustomChip
+              onClick={() => {
+                let item = {
+                  target: {
+                    name: "customs-clearance",
+                    value: formData["customs-clearance"] === true ? false : true
+                  }
+                }
+                setFormData(item);
+              }}
+              avatar={<><CheckBox name="customs-clearance" checked={formData["customs-clearance"]} onChange={setFormData} /><div className={`commodity-icons _32`} /></>}
+              label="Customs clearance"
+            />
           </Popover>
         </Box>
+        {formData['insurance'] === true &&
+          <Grid container mt={3}>
+            <Grid item md={4}>
+              <CustomInputField
+                btnText="USD"
+                placeholder="0"
+                name="invoiceAmount"
+                onChange={setFormData}
+                value={formData['invoiceAmount']}
+                inputlabel="INVOICE AMOUNT"
+              />
+            </Grid>
+          </Grid>
+        }
         <Typography variant='h6' mt={7} mb={3}>СARGOES Finance</Typography>
         <Alert
           severity="info"
+          className='custom-alert'
           iconMapping={{
-            info: <CheckBox />,
+            info: <CheckBox name="isAccessingTrade" checked={formData["isAccessingTrade"]} onChange={setFormData} />,
           }}
         >
           <AlertTitle>I am interested in accessing Trade, Logistics or Invetory Finance</AlertTitle>
@@ -408,7 +812,7 @@ function App() {
             />
           </Grid>
         </Grid>
-        <Grid container mt={6} spacing={4}>
+        <Grid container mt={4} spacing={4}>
           <Grid item md={3}>
             <CustomButton
               title="Send"
@@ -416,7 +820,7 @@ function App() {
             />
           </Grid>
           <Grid item md={8}>
-            <Typography component={"p"}>By clicking Send, you agree with our <Typography component={"a"}>Terms & conditions.</Typography></Typography>
+            <Typography component={"p"} className="terms-conditions">By clicking Send, you agree with our <Typography component={"a"}>Terms & conditions.</Typography></Typography>
           </Grid>
         </Grid>
       </Box>

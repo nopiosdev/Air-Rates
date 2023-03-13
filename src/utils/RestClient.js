@@ -3,10 +3,9 @@ import axios from 'axios';
 
 
 const Get = async (host) => {
-    console.log(host , 'host')
     return axios.get(host)
         .then(({ data }) => {
-            console.log(data  , 'data')
+            console.log(data, 'data')
             return data;
         })
         .catch(async (error) => {
@@ -16,7 +15,6 @@ const Get = async (host) => {
 
 
 const Post = async (host, data) => {
-    console.log(host)
     return axios.post(host, data)
         .then(({ data }) => {
             return data;
@@ -27,4 +25,4 @@ const Post = async (host, data) => {
 }
 
 
-export default { Get, Post };
+export { Get, Post };

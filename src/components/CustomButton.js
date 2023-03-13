@@ -8,8 +8,9 @@ const CustomButton = (props) => {
                 fullWidth
                 onClick={props.onClick}
                 variant={props.variant ?? "contained"}
+                className={props.className ?? ""}
             >
-                {props.title}
+                {props.icon ?? null}   {props.title ?? null}
             </Button>
         </>
     )

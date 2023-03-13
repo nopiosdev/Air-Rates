@@ -1,3 +1,4 @@
+
 export const data = [
     {
         code: "",
@@ -169,11 +170,11 @@ export const data = [
     }
 ]
 
-export const Transportion_Data = [
+export const TRANSPORTATION_DATA = [
     {
         options: [
             {
-                icon: "./boat.svg",
+                icon: "boat",
                 suboptions: [
                     { title: "SEA" },
                     { name: "Full container load", shortForm: "FCL", disabled: false },
@@ -186,7 +187,7 @@ export const Transportion_Data = [
     {
         options: [
             {
-                icon: "./truck-solid.svg",
+                icon: "truck",
                 suboptions: [
                     { title: "ROAD" },
                     { name: "Full container load", shortForm: "FCL", disabled: false },
@@ -195,7 +196,7 @@ export const Transportion_Data = [
                 ]
             },
             {
-                icon: "./wagon.svg",
+                icon: "wagon",
                 suboptions: [
                     { title: "RAIL" },
                     { name: "Full container load", shortForm: "FCL", disabled: true },
@@ -209,7 +210,7 @@ export const Transportion_Data = [
     {
         options: [
             {
-                icon: "./plane-solid.svg",
+                icon: "plane",
                 suboptions: [
                     { title: "AIR" },
                     { name: "Standard cargo", shortForm: "", disabled: false },
@@ -220,7 +221,7 @@ export const Transportion_Data = [
     },
 ]
 
-export const Container_Type = [
+export const CONTAINER_TYPE = [
     "20' Standard",
     "40' Standard",
     "40' High-Cube",
@@ -262,4 +263,58 @@ export const IMO_CLASS = [
     "7 Radioactive Substances",
     "8 Corrosives",
     "9 Miscellaneous dangerous substances and articles"
+]
+
+export const SHIPPING_TYPE = [
+    "Bulk Carriers",
+    "Containerships",
+    "General cargo",
+    "Product tankers / Asphalt carriers",
+    "Product tankers / Chemical tankers",
+    "Product tankers / Crude carriers",
+    "Product tankers / Gas carriers",
+    "Specialized / Heavy-lift",
+    "Specialized / Livestock",
+    "Specialized / Refrigerated",
+    "Specialized / RoRo",
+    "Specialized / Wood chip"
+]
+
+export const TRUCK_TYPE = [
+    "2т - 14м³",
+    "3.5т - 35м³",
+    "3.75т - 50м³",
+    "Autocart",
+    "Container",
+    "Dump",
+    "Flatbed",
+    "Grain",
+    "Heavy loaders",
+    "Isoterm",
+    "Jumbo 100м³",
+    "Jumbo 120м³",
+    "Logging & Pipes",
+    "Mega trailer 100м³",
+    "Refrigerator",
+    "Road trains",
+    "Semitrailer",
+    "Tanker",
+    "Tautliner",
+    "Tilt",
+    "Tilt 120м³",
+    "Tilt 82м³",
+    "Tilt 92м³"
+]
+
+export const WAGON_TYPE = [
+    "Closed wagon",
+    "Container platform",
+    "Cover",
+    "Flat wagon",
+    "Freight wagon",
+    "High side wagon",
+    "Hopper wagon",
+    "Platform",
+    "Side dump wagon",
+    "Tank wagon"
 ]

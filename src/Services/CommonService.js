@@ -1,15 +1,15 @@
 
-import RestClient from "../utils/RestClient";
+import { Post } from "../utils/RestClient";
 
 
 const GoolgePlaceSearch = (input) => {
     let payload = {
         input: input
     }
-    return RestClient.Post(`https://www.searates.com/search/google-autocomplete`, payload)
+    return Post(`https://www.searates.com/search/google-autocomplete`, payload)
 }
 
-const GoolgeGenerateMap = (placeid, code , placetype) => {
+const GoolgeGenerateMap = (placeid, code, placetype) => {
     let payload = {
         input: placeid,
         type: 'place_id',
@@ -17,7 +17,7 @@ const GoolgeGenerateMap = (placeid, code , placetype) => {
         place_type: placetype
     }
 
-    return RestClient.Post(`https://www.searates.com/search/google-geocode`, payload)
+    return Post(`https://www.searates.com/search/google-geocode`, payload)
 }
 
 

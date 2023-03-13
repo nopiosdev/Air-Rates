@@ -10,7 +10,6 @@
 
 * {
   font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-  color: #000c37 !important;
 }
 
 .commodity-icons {
@@ -164,6 +163,9 @@
   width: 16px;
   height: 16px;
 } */
+li.MuiListSubheader-root {
+  font-size: 12px !important;
+}
 
 .MuiMenu-list .svg-icon {
   display: none;
@@ -174,15 +176,68 @@
   margin-right: 10px;
 }
 
+.add-dimension-btn {
+  text-transform: capitalize !important;
+  font-size: 18px !important;
+  color: #08f !important;
+}
+
+/* .add-dimension-btn:hover {
+  background-color: transparent !important;
+} */
+
+.add-dimension-btn svg {
+  font-size: 16px;
+  fill: #08f;
+  margin-right: 6px;
+}
+
+.delete-dimension-btn-container {
+  display: flex;
+  align-items: center;
+}
+
+.delete-dimension-btn {
+  width: 30px !important;
+  min-width: 30px !important;
+  background-color: white !important;
+  margin-top: 18px !important;
+  margin-left: 10px !important;
+}
+
+.delete-dimension-btn svg {
+  fill: #6e7e92;
+  font-size: 16px;
+}
+
+.delete-dimension-btn:hover svg {
+  fill: #f52c5c;
+}
+
+.dimensions-total {
+  float: right;
+}
+
 .heading-wrapper {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
+label {
+  color: #000c37 !important;
+}
+
 .heading-wrapper h4 {
   font-size: 36px;
   font-weight: 600;
+}
+
+.close-icon {
+  font-size: 16px !important;
+  ;
+  fill: #ccc !important;
+  margin-bottom: -2px;
 }
 
 .headline {
@@ -273,6 +328,10 @@
   white-space: normal;
 }
 
+.Mui-checked {
+  color: #08f !important;
+}
+
 .custom-inputField {
   padding: 5px 4px;
   display: flex;
@@ -301,11 +360,36 @@
   padding: 18px 14px !important;
   font-size: 16px !important;
   margin-right: 20px !important;
+  cursor: pointer !important;
 }
-.active-chip{
+
+.terms-conditions {
+  margin-top: 6px !important;
+  color: #9ea9b9;
+}
+
+.terms-conditions a {
+  cursor: pointer;
+  color: #08f;
+}
+
+.active-chip {
   background-color: #eaf5ff !important;
 }
 
+.custom-alert {
+  background: #f2f9ff !important;
+  color: #000 !important;
+}
+
+.MuiTooltip-tooltipPlacementTop {
+  background-color: #08f !important;
+  font-size: 16px !important;
+  padding: 25px !important;
+}
+.MuiTooltip-arrow{
+  color: #08f !important;
+}
 .inputField-btn {
   padding: 0px 10px;
 }
