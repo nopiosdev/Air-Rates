@@ -826,7 +826,7 @@ function App() {
           CARGOES Finance provides access to finance for exporters, importers and logistics companies across the globe for receivables and payables
         </Alert>
         <Typography variant='h6' mt={7} mb={3}>Contact details</Typography>
-        <Grid container mt={3}>
+        <Grid container mt={3} gap={3}>
           <Grid item md={4}>
             <InputField
               type={'text'}
