@@ -95,7 +95,10 @@ const LocationAutoComplete = (props, ref) => {
 
     const moveToMarker = (item) => {
         const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
-        map.panTo(markerLatLng);
+        if(map !== null){
+            map?.panTo(markerLatLng);
+        }
+        
     }
 
     return (
