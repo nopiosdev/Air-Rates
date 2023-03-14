@@ -7,7 +7,17 @@
   box-shadow: 0 4px 15px rgba(58, 112, 191, .1);
 }
 
-
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px; 
+}
+::-webkit-scrollbar-thumb { 
+  background: #e0e4ec;
+  border-radius: 10px !important;
+}
+::-webkit-scrollbar-track { 
+  background: rgb(255, 255, 255);
+}
 * {
   font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
@@ -267,7 +277,7 @@ label {
 .flex-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between !important;
 }
 
 .MuiOutlinedInput-root input {
@@ -387,9 +397,11 @@ label {
   font-size: 16px !important;
   padding: 25px !important;
 }
-.MuiTooltip-arrow{
+
+.MuiTooltip-arrow {
   color: #08f !important;
 }
+
 .inputField-btn {
   padding: 0px 10px;
 }
@@ -446,8 +458,58 @@ label {
   width: 100%;
 }
 
+.hs-modal .MuiDialog-paper {
+  min-width: 800px !important;
+  border-radius: 10px;
+  padding: 25px;
+}
 
+.modal-content {
+  border-radius: 6px !important;
+  border: 1px solid #eff1f6;
+  box-sizing: border-box;
+  margin-bottom: 32px;
+  padding: 6px;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
 
+.modal-content .flex-box {
+  padding: 3px;
+  cursor: pointer;
+}
+
+.modal-content .flex-box:hover {
+  background-color: #f2f9ff;
+}
+
+.modal-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: #f0f9e5;
+  border-radius: 6px;
+  min-height: 38px;
+  color: #7da94a;
+  padding: 8px 16px;
+  margin-bottom: 3px;
+}
+
+.hs-code {
+  color: #9ea9b9;
+}
+
+.modal-btn {
+  width: auto !important;
+  background-color: #f2f9ff !important;
+  color: #08f !important;
+  box-shadow: none !important;
+}
+.modal-select-btn{
+  background-color: #08f !important;
+  color: white !important;
+}
 
 /* LocationAutoComplete */
 

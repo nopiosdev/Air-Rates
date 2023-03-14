@@ -9,67 +9,33 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const ByUnits = (props) => {
 
     const handleOnAddBtnClick = () => {
-        // setDimensions([...dimensions, { dimensionId: dimensions[dimensions.length - 1].dimensionId + 1 }]);
+        let item = {
+            target: {
+                name: "dimensions",
+                value: [
+                    ...props.dimensions,
+                    {
+                        height: 0,
+                        width: 0,
+                        length: 0,
+                        quantity: 0,
+                        grossWeight: 0,
+                        id: props.dimensions[props.dimensions.length - 1].id + 1
+                    }
+                ]
+            }
+        }
+        props.onChange(item);
     }
-    const handleOnDeleteBtnClick = (id) => {
-        // setDimensions(dimensions.filter(x => x.dimensionId !== id));
-    }
-    console.log(props.dimensions)
     return (
         <>
-            {props.dimensions?.map((x,i) =>
-                // <Dimensions 
-                //     index={i}
-                //     item={x}
-                //     handleOnDeleteBtnClick={handleOnDeleteBtnClick}
-                // />
-                <Grid container mt={3}>
-            <Grid item md={4} mr={1}>
-                <CustomInputField
-                    btnText="m"
-                    placeholder="width"
-                    name="dimenionsWidth"
+            {props.dimensions?.map((x, i) =>
+                <Dimensions
+                    index={i}
+                    item={x}
+                    dimensions={props.dimensions}
                     onChange={props.onChange}
-                    value={props.value}
-                    onHeightChange={props.onHeightChange}
-                    onLengthChange={props.onLengthChange}
-                    height={props.height}
-                    length={props.length}
-                    inputlabel="DIMENSIONS"
                 />
-            </Grid>
-            <Grid item md={2} mr={2}>
-                <InputField
-                    type={'number'}
-                    inputlabel="QUANTITY"
-                    placeholder="Quantity"
-                    name="quantity"
-                    required={false}
-                    value={props.quantity}
-                    onChange={props.onQunatityChange}
-                />
-            </Grid>
-            <Grid item md={2}>
-                <CustomInputField
-                    btnText="mt"
-                    placeholder="Gross weight"
-                    name="grossWeight"
-                    onChange={props.onGrossWeightChange}
-                    value={props.grossWeight}
-                    inputlabel="GROSS WEIGHT"
-                />
-            </Grid>
-            {/* {item.length > 1 &&
-                <Grid item md={1} className='delete-dimension-btn-container'>
-                    <CustomButton
-                        icon={<DeleteIcon />}
-                        className="delete-dimension-btn"
-                        onClick={() => item.handleOnDeleteBtnClick(x.dimensionId)}
-                    />
-                </Grid>
-            } */}
-        </Grid>
-        
             )}
             <Grid container mt={3}>
                 <Grid item md={1}>
@@ -82,7 +48,7 @@ const ByUnits = (props) => {
                     />
                 </Grid>
                 <Grid item md={7}>
-                    <Typography component={'p'} className="dimensions-total"><b>Shipment total:</b> {(props.value && props.height && props.length && props.quantity) ? (props.value * props.height * props.length) * props.quantity : 0} m<sup>3</sup> {(props.grossWeight && props.grossWeight !== "") ? props.grossWeight : 0} mt</Typography>
+                    <Typography component={'p'} className="dimensions-total"><b>Shipment total:</b> {props.dimensions.reduce((prev, next) => prev += (parseInt(next.quantity || 0) * parseInt(next.length || 0) * parseInt(next.height || 0) * parseInt(next.width || 0)), 0)} m<sup>3</sup> {props.dimensions.reduce((prev, next) => prev += parseInt(next.grossWeight || 0), 0)}mt</Typography>
                 </Grid>
             </Grid>
         </>
@@ -91,56 +57,112 @@ const ByUnits = (props) => {
 
 export default ByUnits
 
-// export const Dimensions = ({i,item}) => {
-   
-//     return (
-//         <Grid container mt={3}>
-//             <Grid item md={4} mr={1}>
-//                 <CustomInputField
-//                     btnText="m"
-//                     placeholder="width"
-//                     name="dimenionsWidth"
-//                     onChange={(e)=>{
-//                         set
-//                     }}
-//                     value={props.value}
-//                     onHeightChange={props.onHeightChange}
-//                     onLengthChange={props.onLengthChange}
-//                     height={props.height}
-//                     length={props.length}
-//                     inputlabel="DIMENSIONS"
-//                 />
-//             </Grid>
-//             <Grid item md={2} mr={2}>
-//                 <InputField
-//                     type={'number'}
-//                     inputlabel="QUANTITY"
-//                     placeholder="Quantity"
-//                     name="quantity"
-//                     required={false}
-//                     value={props.quantity}
-//                     onChange={props.onQunatityChange}
-//                 />
-//             </Grid>
-//             <Grid item md={2}>
-//                 <CustomInputField
-//                     btnText="mt"
-//                     placeholder="Gross weight"
-//                     name="grossWeight"
-//                     onChange={props.onGrossWeightChange}
-//                     value={props.grossWeight}
-//                     inputlabel="GROSS WEIGHT"
-//                 />
-//             </Grid>
-//             {item.length > 1 &&
-//                 <Grid item md={1} className='delete-dimension-btn-container'>
-//                     <CustomButton
-//                         icon={<DeleteIcon />}
-//                         className="delete-dimension-btn"
-//                         onClick={() => item.handleOnDeleteBtnClick(x.dimensionId)}
-//                     />
-//                 </Grid>
-//             }
-//         </Grid>
-//     )
-// }
+export const Dimensions = ({ index, item, dimensions, onChange }) => {
+    const handleOnDeleteBtnClick = () => {
+        let temp = {
+            target: {
+                name: "dimensions",
+                value: dimensions.filter(x => x.id !== item.id)
+            }
+        }
+        onChange(temp);
+    }
+    return (
+        <Grid container mt={3}>
+            <Grid item md={4} mr={1}>
+                <CustomInputField
+                    btnText="m"
+                    placeholder="width"
+                    name="dimenionsWidth"
+                    onChange={(e) => {
+                        let newDimensions = dimensions;
+                        newDimensions[index].width = e.target.value;
+                        let temp = {
+                            target: {
+                                name: "dimensions",
+                                value: newDimensions
+                            }
+                        }
+                        onChange(temp);
+                    }}
+                    value={dimensions[index].width}
+                    onHeightChange={(e) => {
+                        let newDimensions = dimensions;
+                        newDimensions[index].height = e.target.value
+                        let temp = {
+                            target: {
+                                name: "dimensions",
+                                value: newDimensions
+                            }
+                        }
+                        onChange(temp);
+                    }}
+                    onLengthChange={(e) => {
+                        let newDimensions = dimensions;
+                        newDimensions[index].length = e.target.value
+                        let temp = {
+                            target: {
+                                name: "dimensions",
+                                value: newDimensions
+                            }
+                        }
+                        onChange(temp);
+                    }}
+                    height={dimensions[index].height}
+                    length={dimensions[index].length}
+                    inputlabel="DIMENSIONS"
+                />
+            </Grid>
+            <Grid item md={2} mr={2}>
+                <InputField
+                    type={'number'}
+                    inputlabel="QUANTITY"
+                    placeholder="Quantity"
+                    name="quantity"
+                    required={false}
+                    value={dimensions[index].quantity}
+                    onChange={(e) => {
+                        let newDimensions = dimensions;
+                        newDimensions[index].quantity = e.target.value;
+                        let temp = {
+                            target: {
+                                name: "dimensions",
+                                value: newDimensions
+                            }
+                        }
+                        onChange(temp);
+                    }}
+                />
+            </Grid>
+            <Grid item md={2}>
+                <CustomInputField
+                    btnText="mt"
+                    placeholder="Gross weight"
+                    name="grossWeight"
+                    onChange={(e) => {
+                        let newDimensions = dimensions;
+                        newDimensions[index].grossWeight = e.target.value
+                        let temp = {
+                            target: {
+                                name: "dimensions",
+                                value: newDimensions
+                            }
+                        }
+                        onChange(temp);
+                    }}
+                    value={dimensions[index].grossWeight}
+                    inputlabel="GROSS WEIGHT"
+                />
+            </Grid>
+            {dimensions.length > 1 &&
+                <Grid item md={1} className='delete-dimension-btn-container'>
+                    <CustomButton
+                        icon={<DeleteIcon />}
+                        className="delete-dimension-btn"
+                        onClick={handleOnDeleteBtnClick}
+                    />
+                </Grid>
+            }
+        </Grid>
+    )
+}

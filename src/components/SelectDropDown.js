@@ -11,6 +11,7 @@ const SelectDropDown = (props) => {
                 IconComponent={props.icon}
                 value={props.value}
                 onChange={props.onChange}
+                disabled={props.disabled ?? false}
                 displayEmpty
                 name={props.name}
                 renderValue={(selected) => {

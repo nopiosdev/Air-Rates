@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
-import CommonService from '../Services/CommonService';
+import { GoolgePlaceSearch } from '../Services/CommonService';
 import axios from "axios";
 import { Autocomplete, Box, FormLabel, TextField } from "@mui/material";
 
@@ -17,7 +17,7 @@ const LocationAutoComplete = (props, ref) => {
 
     const SearchPlaces = async (e) => {
         setShowloader(true)
-        await CommonService.GoolgePlaceSearch(e)
+        await GoolgePlaceSearch(e)
             .then((res) => {
                 if (res != null) {
                     setShowloader(false)
@@ -86,6 +86,7 @@ const LocationAutoComplete = (props, ref) => {
     }
 
     const handleOnSelect = (val) => {
+        props.handleChange(val);
         setValue(val);
         setListData([]);
         setListNearByData([]);
@@ -93,7 +94,6 @@ const LocationAutoComplete = (props, ref) => {
     }
 
     const moveToMarker = (item) => {
-        console.log("item",item);
         const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
         map.panTo(markerLatLng);
     }
@@ -125,7 +125,7 @@ const LocationAutoComplete = (props, ref) => {
                 filterSelectedOptions={true}
                 loading={showloader}
                 loadingText={<span className="loader" />}
-                getOptionLabel={(option) => {
+                getOptionLabel={(option) => {                    
                     if (listNearByData.length === 0 && option.city) {
                         return option.city + " " + option.country
                     } else if (option.name) {

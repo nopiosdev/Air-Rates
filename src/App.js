@@ -2,7 +2,7 @@ import './App.css';
 import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider } from '@mui/material';
 import React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import { CONTAINER_TYPE, data, IMO_CLASS, SHIPPING_TYPE, TRANSPORTATION_DATA, TRUCK_TYPE, WAGON_TYPE } from './data';
+import { CONTAINER_TYPE, COMMODITY_TYPE, IMO_CLASS, SHIPPING_TYPE, TRANSPORTATION_DATA, TRUCK_TYPE, WAGON_TYPE } from './data';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import InputField from './components/InputField';
 import LocationAutoComplete from './components/LocationAutoComplete';
@@ -16,11 +16,16 @@ import SelectDropDown from './components/SelectDropDown';
 import CustomInputField from './components/CustomInputField';
 import { BoatIcon, PlaneIcon, RoadIcon, RocketIcon, TruckIcon, WagonIcon } from './components/Icons';
 import ByUnits from './components/ByUnits';
+import DialogBox from './components/DialogBox';
+import { getHSCodes } from './Services/CommonService';
 
 
 function App() {
 
   const [formData, setFormData] = React.useReducer(formReducer, {});
+  const [modal, setModal] = React.useState(false);
+  const [data, setData] = React.useState([]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     '& .MuiToggleButtonGroup-grouped': {
@@ -111,7 +116,23 @@ function App() {
           name: "volume",
           value: null
         }
-      }]
+      },
+      {
+        target: {
+          name: "dimensions",
+          value: [
+            {
+              height: 0,
+              width: 0,
+              length: 0,
+              quantity: 0,
+              grossWeight: 0,
+              id: 1
+            }
+          ]
+        }
+      }
+    ]
     item.map(x => setFormData(x));
     setFormData(e);
   }
@@ -192,6 +213,7 @@ function App() {
     items.map(x => setFormData(x));
   }
   React.useEffect(() => {
+    getHSCodes(null, 0, setIsLoaded, setData);
     let items = [
       {
         target: {
@@ -218,7 +240,10 @@ function App() {
             {
               height: 0,
               width: 0,
-              length: 0
+              length: 0,
+              quantity: 0,
+              grossWeight: 0,
+              id: 1
             }
           ]
         }
@@ -227,7 +252,7 @@ function App() {
     items.map(x => setFormData(x));
   }, [])
 
-  console.log("formData", formData)
+
   return (
     <Container>
       <Box className='layout'>
@@ -255,7 +280,7 @@ function App() {
           <Grid item md={9}>
             <Box className="flex-box" mb={1}>
               <InputLabel className='input-label' required>PRODUCT</InputLabel>
-              <Typography sx={{ float: 'right' }}>HS Codes</Typography>
+              <Typography sx={{ float: 'right', cursor: 'pointer' }} onClick={() => setModal(true)}>HS Codes</Typography>
             </Box>
             <Autocomplete
               freeSolo
@@ -263,36 +288,27 @@ function App() {
               options={data}
               autoHighlight
               className='img-select'
-              value={formData['commodityType']}
+              value={formData['commodityType'] || { description: "" }}
               onChange={(e, option) => {
-                let item = {
-                  target: {
-                    name: "commodityType",
-                    value: option?.description
-                  }
+                if (!option) {
+                  getHSCodes(null, 0, setIsLoaded, setData);
                 }
-                setFormData(item);
+                setFormData({ target: { name: "commodityType", value: option } });
               }}
-              getOptionLabel={(option) => option.description + " " + option.code}
+              getOptionLabel={(option) => option.description}
               renderOption={(props, option) => (
-                <Box component="li" {...props}>
-                  <div className={`commodity-icons ${option?.class}`} />
-                  {option.description} {option.code && `(${option.code})`}
+                <Box className="flex-box" component="li"  {...props}>
+                  <div style={{ display: "flex", alignItems: "center", flex: 1 }} >
+                    <span className={`commodity-icons ${option?.class}`} />
+                    {option.description}
+                  </div>
+                  <div className='hs-code'>{option.code}</div>
                 </Box>
               )}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   placeholder="Enter commodity type or HS code"
-                  inputProps={{
-                    ...params.inputProps,
-                    autoComplete: 'new-password',
-                    startadornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
                 />
               )}
             />
@@ -531,16 +547,7 @@ function App() {
             {formData["byUnits"] === true ?
               <ByUnits
                 onChange={setFormData}
-                onHeightChange={setFormData}
-                onLengthChange={setFormData}
-                onQunatityChange={setFormData}
-                onGrossWeightChange={setFormData}
                 dimensions={formData['dimensions']}
-                value={formData['dimenionsWidth']}
-                height={formData['dimenionsHeight']}
-                length={formData['dimenionsLength']}
-                quantity={formData['quantity']}
-                grossWeight={formData['grossWeight']}
               />
               :
               <Grid container mt={3}>
@@ -676,6 +683,16 @@ function App() {
               required={true}
               Inputplaceholder={'City , Port'}
               mapid={'frommap'}
+              name="from"
+              handleChange={(opt) => {
+                let item = {
+                  target: {
+                    name: "from",
+                    value: opt
+                  }
+                }
+                setFormData(item);
+              }}
             />
           </Grid>
           <Grid item md={5} ml={4}>
@@ -684,6 +701,15 @@ function App() {
               required={true}
               Inputplaceholder={'City , Port'}
               mapid={'tomap'}
+              handleChange={(opt) => {
+                let item = {
+                  target: {
+                    name: "to",
+                    value: opt
+                  }
+                }
+                setFormData(item);
+              }}
             />
           </Grid>
         </Grid>
@@ -816,7 +842,7 @@ function App() {
           <Grid item md={3}>
             <CustomButton
               title="Send"
-              onClick={() => { }}
+              onClick={() => { console.log("FORM_DATA", formData) }}
             />
           </Grid>
           <Grid item md={8}>
@@ -824,6 +850,22 @@ function App() {
           </Grid>
         </Grid>
       </Box>
+      <DialogBox
+        open={modal}
+        handleClose={() => setModal(false)}
+        handleOnSelect={(val) => {
+          console.log("handleOnSelect", val)
+          val.description = val.title;
+          let item = {
+            target: {
+              name: "commodityType",
+              value: val
+            }
+          }
+          getHSCodes(val.code, val.level, setIsLoaded, setData);
+          setFormData(item);
+        }}
+      />
     </Container>
   );
 }
