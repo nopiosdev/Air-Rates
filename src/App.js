@@ -837,6 +837,16 @@ function App() {
               onChange={setFormData}
             />
           </Grid>
+          <Grid item md={4}>
+            <InputField
+              type={'email'}
+              inputlabel="EMAIL"
+              placeholder="Enter your email"
+              name="email"
+              value={formData['email']}
+              onChange={setFormData}
+            />
+          </Grid>
         </Grid>
         <Grid container mt={4} spacing={4}>
           <Grid item md={3}>
