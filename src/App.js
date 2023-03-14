@@ -832,8 +832,8 @@ function App() {
               type={'text'}
               inputlabel="PHONE"
               placeholder="(000) 000 000"
-              name="info"
-              value={formData['info']}
+              name="phone"
+              value={formData['phone']}
               onChange={setFormData}
             />
           </Grid>
