@@ -1,5 +1,4 @@
-import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
-import axios from 'axios'
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import React, { useState } from 'react'
 import { getHSCodes } from '../Services/CommonService'
 import CustomButton from './CustomButton'
@@ -8,8 +7,6 @@ const DialogBox = (props) => {
     const [data, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState([]);
-
-
 
     const handleOnCategoryClick = (item) => {
         setSelectedCategory([...selectedCategory, { code: item.code, level: item.level + 1, title: item.description }])

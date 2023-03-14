@@ -1,8 +1,7 @@
 import './App.css';
-import { Container, Typography, Grid, MenuItem, Select, TextField, InputAdornment, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider } from '@mui/material';
+import { Container, Typography, Grid, MenuItem, Select, TextField, Autocomplete, InputLabel, Paper, ToggleButton, ToggleButtonGroup, styled, ListSubheader, Box, Alert, AlertTitle, InputBase, Divider } from '@mui/material';
 import React from 'react';
-import SearchIcon from '@mui/icons-material/Search';
-import { CONTAINER_TYPE, COMMODITY_TYPE, IMO_CLASS, SHIPPING_TYPE, TRANSPORTATION_DATA, TRUCK_TYPE, WAGON_TYPE } from './data';
+import { CONTAINER_TYPE, IMO_CLASS, SHIPPING_TYPE, TRANSPORTATION_DATA, TRUCK_TYPE, WAGON_TYPE } from './data';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import InputField from './components/InputField';
 import LocationAutoComplete from './components/LocationAutoComplete';
@@ -751,7 +750,8 @@ function App() {
                 }
                 setFormData(item);
               }}
-              avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>} label="Insurance"
+              avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>} 
+              label="Insurance"
             />
           </Popover>
           <Popover title={"Order an inspection or tally service by checking this one."} >
@@ -852,6 +852,7 @@ function App() {
       </Box>
       <DialogBox
         open={modal}
+        loading={isLoaded}
         handleClose={() => setModal(false)}
         handleOnSelect={(val) => {
           console.log("handleOnSelect", val)
