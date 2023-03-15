@@ -206,6 +206,33 @@ function App() {
           name: "qtyOfWagons",
           value: ""
         }
+      },
+      {
+        target: {
+          name: "weight",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "volume",
+          value: ""
+        }
+      },
+      {
+        target: {
+          name: "dimensions",
+          value: [
+            {
+              height: 0,
+              width: 0,
+              length: 0,
+              quantity: 0,
+              grossWeight: 0,
+              id: 1
+            }
+          ]
+        }
       }
 
     ];
@@ -234,6 +261,12 @@ function App() {
       },
       {
         target: {
+          name: "degree",
+          value: 'C'
+        }
+      },
+      {
+        target: {
           name: "dimensions",
           value: [
             {
@@ -256,14 +289,14 @@ function App() {
     <Container>
       <Box className='layout'>
         <Grid container>
-          <Grid item md={10}>
+          <Grid item md={10} sm={9} xs={12}>
             <Box className='heading-wrapper'>
               <Typography variant='h4'>Request a quote</Typography>
               <img src="./ebook.svg" alt="ebook" />
             </Box>
             <Typography className='headline' mt={2}>And get the best rates from the leading logistics providers.</Typography>
           </Grid>
-          <Grid item md={2}>
+          <Grid item md={2} sm={3} xs={12}>
             <SelectDropDown
               icon={(props) => <KeyboardArrowDownIcon {...props} />}
               value={formData['metricState'] ?? "International (SI)"}
@@ -276,7 +309,7 @@ function App() {
         </Grid>
         <Typography variant='h6' mt={2} mb={3}>Cargo details</Typography>
         <Grid container>
-          <Grid item md={9}>
+          <Grid item md={9} xs={12}>
             <Box className="flex-box" mb={1}>
               <InputLabel className='input-label' required>PRODUCT</InputLabel>
               <Typography sx={{ float: 'right', cursor: 'pointer' }} onClick={() => setModal(true)}>HS Codes</Typography>
@@ -322,8 +355,8 @@ function App() {
           </Grid>
         </Grid>
         {(formData['cargo-type'] === "hazardous" && formData['commodityType']) &&
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={2} spacing={2}>
+            <Grid item md={5} sm={6} xs={12}>
               <SelectDropDown
                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
                 value={formData['imo']}
@@ -334,23 +367,22 @@ function App() {
                 data={IMO_CLASS}
               />
             </Grid>
-            <Grid item md={5} ml={4}>
+            <Grid item md={5} sm={6} xs={12}>
               <InputField
-                type={'text'}
                 inputlabel="UN NUMBER"
                 placeholder="0"
                 name="unnum"
-                value={formData['unnum']}
+                value={formData['unnum'] ?? 0}
                 onChange={setFormData}
               />
             </Grid>
           </Grid>
         }
         {(formData['cargo-type'] === "oversized" && formData['commodityType']) &&
-          <Grid container mt={3}>
-            <Grid item md={2.5}>
+          <Grid container mt={0} spacing={3}>
+            <Grid item md={2.5} sm={4} xs={12}>
               <CustomInputField
-                btnText="m"
+                btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                 placeholder="0"
                 name="length"
                 onChange={setFormData}
@@ -358,9 +390,9 @@ function App() {
                 inputlabel="LENGTH"
               />
             </Grid>
-            <Grid item md={2.5}>
+            <Grid item md={2.5} sm={4} xs={12}>
               <CustomInputField
-                btnText="m"
+                btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                 placeholder="0"
                 name="width"
                 onChange={setFormData}
@@ -368,9 +400,9 @@ function App() {
                 inputlabel="WIDTH"
               />
             </Grid>
-            <Grid item md={2.5}>
+            <Grid item md={2.5} sm={4} xs={12}>
               <CustomInputField
-                btnText="m"
+                btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                 placeholder="0"
                 name="height"
                 onChange={setFormData}
@@ -382,7 +414,7 @@ function App() {
         }
         {(formData['cargo-type'] === "perishable" && formData['commodityType']) &&
           <Grid container mt={3}>
-            <Grid item md={5}>
+            <Grid item md={5} sm={6} xs={12}>
               <InputLabel className='input-label'>TEMPERATURE REGIME</InputLabel>
               <Paper
                 component="form"
@@ -406,13 +438,14 @@ function App() {
         }
         <Typography variant='h6' mt={7} mb={3}>Delivery</Typography>
         <Grid container>
-          <Grid item md={3}>
+          <Grid item md={3} sm={6} xs={12}>
             <Paper
               elevation={0}
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                mr: 1,
+                mr: { sm: 1, xs: 0 },
+                mb: { sm: 0, xs: 1 }
               }}
             >
               <StyledToggleButtonGroup
@@ -434,22 +467,24 @@ function App() {
               </StyledToggleButtonGroup>
             </Paper>
           </Grid>
-          <StyledToggleButtonGroup
-            size="small"
-            value={formData['deliveryWay']}
-            exclusive
-            onChange={handleDeliveryWay}
-          >
-            <ToggleButton name="deliveryWay" className='selected-auto' value={"auto"}>
-              <RocketIcon active={formData['deliveryWay']} />&nbsp;AUTO
-            </ToggleButton>
-          </StyledToggleButtonGroup>
+          <Grid item md={3} sm={6} xs={12}>
+            <StyledToggleButtonGroup
+              size="small"
+              value={formData['deliveryWay']}
+              exclusive
+              onChange={handleDeliveryWay}
+            >
+              <ToggleButton name="deliveryWay" className='selected-auto' value={"auto"}>
+                <RocketIcon active={formData['deliveryWay']} />&nbsp;AUTO
+              </ToggleButton>
+            </StyledToggleButtonGroup>
+          </Grid>
         </Grid>
         {formData['deliveryWay'] === 'auto' ?
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={1} spacing={3}>
+            <Grid item md={5} xs={12}>
               <CustomInputField
-                btnText="mt"
+                btnText={formData['metricState'] === "Imperial (US)" ? "lbs" : "mt"}
                 placeholder="Weight"
                 name="weight"
                 onChange={setFormData}
@@ -458,10 +493,10 @@ function App() {
                 required={true}
               />
             </Grid>
-            <Grid item md={5} ml={4}>
+            <Grid item md={5} xs={12}>
               <CustomInputField
                 supText="3"
-                btnText={"m"}
+                btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                 placeholder="Volume"
                 name="volume"
                 onChange={setFormData}
@@ -472,8 +507,8 @@ function App() {
             </Grid>
           </Grid>
           :
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={0} spacing={3}>
+            <Grid item md={5} xs={12}>
               <InputLabel className='input-label' required>TRANSPORTATION BY</InputLabel>
               <Select
                 fullWidth
@@ -507,8 +542,8 @@ function App() {
           </Grid>
         }
         {(formData["transportationType"] === "Full container load FCL" || formData["transportationType"] === "ULD container") &&
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={0} spacing={3}>
+            <Grid item md={5} sm={6} xs={12}>
               <SelectDropDown
                 label="CONTAINER TYPE"
                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -519,7 +554,7 @@ function App() {
                 data={CONTAINER_TYPE}
               />
             </Grid>
-            <Grid item md={5} ml={4}>
+            <Grid item md={5} sm={6} xs={12}>
               <InputField
                 type={'number'}
                 inputlabel="QUANTITY OF CONTAINERS"
@@ -533,7 +568,7 @@ function App() {
         }
         {(formData["transportationType"] === "Less container load LCL" || formData["transportationType"] === "Less truck load LTL" || formData["transportationType"] === "Standard cargo") &&
           <>
-            <Grid container mt={3}>
+            <Grid container mt={1}>
               <Grid item xs={12}>
                 <CheckBox
                   label="By units"
@@ -547,12 +582,13 @@ function App() {
               <ByUnits
                 onChange={setFormData}
                 dimensions={formData['dimensions']}
+                metricState={formData['metricState']}
               />
               :
-              <Grid container mt={3}>
-                <Grid item md={5}>
+              <Grid container mt={0} spacing={3}>
+                <Grid item md={5} sm={6} xs={12}>
                   <CustomInputField
-                    btnText="mt"
+                    btnText={formData['metricState'] === "Imperial (US)" ? "lbs" : "mt"}
                     placeholder="Weight"
                     name="weight"
                     onChange={setFormData}
@@ -561,10 +597,10 @@ function App() {
                     required={true}
                   />
                 </Grid>
-                <Grid item md={5} ml={4}>
+                <Grid item md={5} sm={6} xs={12}>
                   <CustomInputField
                     supText="3"
-                    btnText={"m"}
+                    btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                     placeholder="Volume"
                     name="volume"
                     onChange={setFormData}
@@ -579,8 +615,8 @@ function App() {
         }
         {formData["transportationType"] === "Bulk" &&
           <>
-            <Grid container mt={3}>
-              <Grid item md={5}>
+            <Grid container mt={0} spacing={3}>
+              <Grid item md={5} sm={6} xs={12}>
                 <SelectDropDown
                   label="SHIP TYPE"
                   icon={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -591,9 +627,9 @@ function App() {
                   data={SHIPPING_TYPE}
                 />
               </Grid>
-              <Grid item md={5} ml={4}>
+              <Grid item md={5} sm={6} xs={12}>
                 <CustomInputField
-                  btnText="mt"
+                  btnText={formData['metricState'] === "Imperial (US)" ? "lbs" : "mt"}
                   name="grossWeight"
                   onChange={setFormData}
                   value={formData["grossWeight"]}
@@ -602,19 +638,19 @@ function App() {
                 />
               </Grid>
             </Grid>
-            <Grid container mt={3}>
-              <Grid item md={5}>
+            <Grid container mt={0} spacing={3}>
+              <Grid item md={5} sm={6} xs={12}>
                 <CustomInputField
-                  btnText="mt/day"
+                  btnText={formData['metricState'] === "Imperial (US)" ? "lbs/day" : "mt/day"}
                   name="loadingRate"
                   onChange={setFormData}
                   value={formData["loadingRate"]}
                   inputlabel="LOADING RATE"
                 />
               </Grid>
-              <Grid item md={5} ml={4}>
+              <Grid item md={5} sm={6} xs={12}>
                 <CustomInputField
-                  btnText="mt/day"
+                  btnText={formData['metricState'] === "Imperial (US)" ? "lbs/day" : "mt/day"}
                   name="dischargingRate"
                   onChange={setFormData}
                   value={formData["dischargingRate"]}
@@ -626,8 +662,8 @@ function App() {
           </>
         }
         {formData["transportationType"] === "Full truck load FTL" &&
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={0} spacing={3}>
+            <Grid item md={5} sm={6} xs={12}>
               <SelectDropDown
                 label="TRUCK TYPE"
                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -638,7 +674,7 @@ function App() {
                 data={TRUCK_TYPE}
               />
             </Grid>
-            <Grid item md={5} ml={4}>
+            <Grid item md={5} sm={6} xs={12}>
               <InputField
                 type={'number'}
                 inputlabel="QUANTITY OF TRUCKS"
@@ -651,8 +687,8 @@ function App() {
           </Grid>
         }
         {formData["transportationType"] === "Full wagon load FWL" &&
-          <Grid container mt={3}>
-            <Grid item md={5}>
+          <Grid container mt={0} spacing={3}>
+            <Grid item md={5} sm={6} xs={12}>
               <SelectDropDown
                 label="WAGON TYPE"
                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
@@ -663,7 +699,7 @@ function App() {
                 data={WAGON_TYPE}
               />
             </Grid>
-            <Grid item md={5} ml={4}>
+            <Grid item md={5} sm={6} xs={12}>
               <InputField
                 type={'number'}
                 inputlabel="QUANTITY OF WAGONS"
@@ -675,14 +711,13 @@ function App() {
             </Grid>
           </Grid>
         }
-        <Grid container mt={3}>
-          <Grid item md={5}>
+        <Grid container mt={0} spacing={3}>
+          <Grid item md={5} sm={6} xs={12}>
             <LocationAutoComplete
               label={'From'}
               required={true}
               Inputplaceholder={'City , Port'}
               mapid={'frommap'}
-              name="from"
               handleChange={(opt) => {
                 let item = {
                   target: {
@@ -694,7 +729,7 @@ function App() {
               }}
             />
           </Grid>
-          <Grid item md={5} ml={4}>
+          <Grid item md={5} sm={6} xs={12}>
             <LocationAutoComplete
               label={'To'}
               required={true}
@@ -712,8 +747,8 @@ function App() {
             />
           </Grid>
         </Grid>
-        <Grid container mt={3}>
-          <Grid item md={5}>
+        <Grid container mt={0} spacing={3}>
+          <Grid item md={5} sm={6} xs={12}>
             <Calendar
               value={formData['readytoload']}
               onChange={setFormData}
@@ -724,7 +759,7 @@ function App() {
           </Grid>
         </Grid>
         <Grid container mt={3}>
-          <Grid item md={9}>
+          <Grid item md={9} xs={12}>
             <InputField
               multiline={true}
               type={'text'}
@@ -750,7 +785,7 @@ function App() {
                 }
                 setFormData(item);
               }}
-              avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>} 
+              avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>}
               label="Insurance"
             />
           </Popover>
@@ -801,7 +836,7 @@ function App() {
         </Box>
         {formData['insurance'] === true &&
           <Grid container mt={3}>
-            <Grid item md={4}>
+            <Grid item sm={4} xs={12}>
               <CustomInputField
                 btnText="USD"
                 placeholder="0"
@@ -822,12 +857,13 @@ function App() {
           }}
         >
           <AlertTitle>I am interested in accessing Trade, Logistics or Invetory Finance</AlertTitle>
-          <div><img src="./cargo.svg" alt="" style={{ float: 'right' }} /></div>
+          <Box component={'span'} sx={{ display: { md: 'block', xs: 'none' } }}><img src="./cargo.svg" alt="" style={{ float: 'right' }} /></Box>
           CARGOES Finance provides access to finance for exporters, importers and logistics companies across the globe for receivables and payables
+          <Box component={'span'} sx={{ display: { md: 'none', xs: 'block' } }}><img src="./cargo.svg" alt="" style={{ float: 'right' }} /></Box>
         </Alert>
         <Typography variant='h6' mt={7} mb={3}>Contact details</Typography>
         <Grid container mt={3} gap={3}>
-          <Grid item md={4}>
+          <Grid item sm={4} xs={12}>
             <InputField
               type={'text'}
               inputlabel="PHONE"
@@ -837,7 +873,7 @@ function App() {
               onChange={setFormData}
             />
           </Grid>
-          <Grid item md={4}>
+          <Grid item sm={4} xs={12}>
             <InputField
               type={'email'}
               inputlabel="EMAIL"
@@ -849,7 +885,7 @@ function App() {
           </Grid>
         </Grid>
         <Grid container mt={4} spacing={4}>
-          <Grid item md={3}>
+          <Grid item sm={3} xs={12}>
             <CustomButton
               title="Send"
               onClick={() => { console.log("FORM_DATA", formData) }}

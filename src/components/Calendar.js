@@ -12,15 +12,18 @@ const Calendar = (props) => {
             <DatePicker
                 className='date-picker'
                 value={props.value}
-                onChange={props.onChange}
+                onChange={(e) => {
+                    let item = {
+                        target: {
+                            name: props.name,
+                            value: e?.format('MM-DD-YYYY')
+                        }
+                    }
+                    props.onChange(item);
+                }}
                 name={props.name}
                 minDate={moment()}
                 disablePast={true}
-            // label={props.placeholder}
-            // slots={{
-            //     openPickerButton: () => <button >test</button>
-            // }}
-
             />
         </LocalizationProvider>
     )

@@ -10,16 +10,6 @@ const GoolgePlaceSearch = (input) => {
     return Post(`https://www.searates.com/search/google-autocomplete`, payload)
 }
 
-const GoolgeGenerateMap = (placeid, code, placetype) => {
-    let payload = {
-        input: placeid,
-        type: 'place_id',
-        country_code: code,
-        place_type: placetype
-    }
-
-    return Post(`https://www.searates.com/search/google-geocode`, payload)
-}
 const getHSCodes = (code = null, level = 0, setIsLoaded, setData) => {
     setIsLoaded(true);
     if (!code) {
@@ -59,7 +49,6 @@ const getHSCodes = (code = null, level = 0, setIsLoaded, setData) => {
             }
         }).then((result) => {
             setIsLoaded(false);
-            // console.log("result", result.data)
             let res = addIcon(result);
             setData(res)
         });
@@ -142,4 +131,4 @@ const addIcon = (result) => {
 
 
 
-export { GoolgePlaceSearch, GoolgeGenerateMap, getHSCodes }
+export { GoolgePlaceSearch, getHSCodes }

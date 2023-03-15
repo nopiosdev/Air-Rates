@@ -35,10 +35,11 @@ const ByUnits = (props) => {
                     item={x}
                     dimensions={props.dimensions}
                     onChange={props.onChange}
+                    metricState={props.metricState}
                 />
             )}
-            <Grid container mt={3}>
-                <Grid item md={1}>
+            <Grid container mt={0} spacing={3}>
+                <Grid item xs={1}>
                     <CustomButton
                         variant="text"
                         title="Add"
@@ -47,8 +48,8 @@ const ByUnits = (props) => {
                         onClick={handleOnAddBtnClick}
                     />
                 </Grid>
-                <Grid item md={7}>
-                    <Typography component={'p'} className="dimensions-total"><b>Shipment total:</b> {props.dimensions.reduce((prev, next) => prev += (parseInt(next.quantity || 0) * parseInt(next.length || 0) * parseInt(next.height || 0) * parseInt(next.width || 0)), 0)} m<sup>3</sup> {props.dimensions.reduce((prev, next) => prev += parseInt(next.grossWeight || 0), 0)}mt</Typography>
+                <Grid item md={9} xs={11}>
+                    <Typography component={'p'} className="dimensions-total"><b>Shipment total:</b> {props.dimensions.reduce((prev, next) => prev += (parseInt(next.quantity || 0) * parseInt(next.length || 0) * parseInt(next.height || 0) * parseInt(next.width || 0)), 0)} {props.metricState === "Imperial (US)" ? "ft" : "m"}<sup>3</sup> {props.dimensions.reduce((prev, next) => prev += parseInt(next.grossWeight || 0), 0)} {props.metricState === "Imperial (US)" ? "lbs" : "mt"}</Typography>
                 </Grid>
             </Grid>
         </>
@@ -57,7 +58,7 @@ const ByUnits = (props) => {
 
 export default ByUnits
 
-export const Dimensions = ({ index, item, dimensions, onChange }) => {
+export const Dimensions = ({ index, item, dimensions, onChange, metricState }) => {
     const handleOnDeleteBtnClick = () => {
         let temp = {
             target: {
@@ -68,94 +69,98 @@ export const Dimensions = ({ index, item, dimensions, onChange }) => {
         onChange(temp);
     }
     return (
-        <Grid container mt={3}>
-            <Grid item md={4} mr={1}>
-                <CustomInputField
-                    btnText="m"
-                    placeholder="width"
-                    name="dimenionsWidth"
-                    onChange={(e) => {
-                        let newDimensions = dimensions;
-                        newDimensions[index].width = e.target.value;
-                        let temp = {
-                            target: {
-                                name: "dimensions",
-                                value: newDimensions
-                            }
-                        }
-                        onChange(temp);
-                    }}
-                    value={dimensions[index].width}
-                    onHeightChange={(e) => {
-                        let newDimensions = dimensions;
-                        newDimensions[index].height = e.target.value
-                        let temp = {
-                            target: {
-                                name: "dimensions",
-                                value: newDimensions
-                            }
-                        }
-                        onChange(temp);
-                    }}
-                    onLengthChange={(e) => {
-                        let newDimensions = dimensions;
-                        newDimensions[index].length = e.target.value
-                        let temp = {
-                            target: {
-                                name: "dimensions",
-                                value: newDimensions
-                            }
-                        }
-                        onChange(temp);
-                    }}
-                    height={dimensions[index].height}
-                    length={dimensions[index].length}
-                    inputlabel="DIMENSIONS"
-                />
-            </Grid>
-            <Grid item md={2} mr={2}>
-                <InputField
-                    type={'number'}
-                    inputlabel="QUANTITY"
-                    placeholder="Quantity"
-                    name="quantity"
-                    required={false}
-                    value={dimensions[index].quantity}
-                    onChange={(e) => {
-                        let newDimensions = dimensions;
-                        newDimensions[index].quantity = e.target.value;
-                        let temp = {
-                            target: {
-                                name: "dimensions",
-                                value: newDimensions
-                            }
-                        }
-                        onChange(temp);
-                    }}
-                />
-            </Grid>
-            <Grid item md={2}>
-                <CustomInputField
-                    btnText="mt"
-                    placeholder="Gross weight"
-                    name="grossWeight"
-                    onChange={(e) => {
-                        let newDimensions = dimensions;
-                        newDimensions[index].grossWeight = e.target.value
-                        let temp = {
-                            target: {
-                                name: "dimensions",
-                                value: newDimensions
-                            }
-                        }
-                        onChange(temp);
-                    }}
-                    value={dimensions[index].grossWeight}
-                    inputlabel="GROSS WEIGHT"
-                />
+        <Grid container mt={0}>
+            <Grid item md={10} sm={11} xs={12}>
+                <Grid container mt={0} spacing={3}>
+                    <Grid item md={6} xs={12}>
+                        <CustomInputField
+                            btnText={metricState === "Imperial (US)" ? "ft" : "m"}
+                            placeholder="width"
+                            name="dimenionsWidth"
+                            onChange={(e) => {
+                                let newDimensions = dimensions;
+                                newDimensions[index].width = e.target.value;
+                                let temp = {
+                                    target: {
+                                        name: "dimensions",
+                                        value: newDimensions
+                                    }
+                                }
+                                onChange(temp);
+                            }}
+                            value={dimensions[index].width}
+                            onHeightChange={(e) => {
+                                let newDimensions = dimensions;
+                                newDimensions[index].height = e.target.value
+                                let temp = {
+                                    target: {
+                                        name: "dimensions",
+                                        value: newDimensions
+                                    }
+                                }
+                                onChange(temp);
+                            }}
+                            onLengthChange={(e) => {
+                                let newDimensions = dimensions;
+                                newDimensions[index].length = e.target.value
+                                let temp = {
+                                    target: {
+                                        name: "dimensions",
+                                        value: newDimensions
+                                    }
+                                }
+                                onChange(temp);
+                            }}
+                            height={dimensions[index].height}
+                            length={dimensions[index].length}
+                            inputlabel="DIMENSIONS"
+                        />
+                    </Grid>
+                    <Grid item md={3} sm={6} xs={12}>
+                        <InputField
+                            type={'number'}
+                            inputlabel="QUANTITY"
+                            placeholder="Quantity"
+                            name="quantity"
+                            required={false}
+                            value={dimensions[index].quantity}
+                            onChange={(e) => {
+                                let newDimensions = dimensions;
+                                newDimensions[index].quantity = e.target.value;
+                                let temp = {
+                                    target: {
+                                        name: "dimensions",
+                                        value: newDimensions
+                                    }
+                                }
+                                onChange(temp);
+                            }}
+                        />
+                    </Grid>
+                    <Grid item md={3} sm={6} xs={12}>
+                        <CustomInputField
+                            btnText={metricState === "Imperial (US)" ? "lbs" : "mt"}
+                            placeholder="Gross weight"
+                            name="grossWeight"
+                            onChange={(e) => {
+                                let newDimensions = dimensions;
+                                newDimensions[index].grossWeight = e.target.value
+                                let temp = {
+                                    target: {
+                                        name: "dimensions",
+                                        value: newDimensions
+                                    }
+                                }
+                                onChange(temp);
+                            }}
+                            value={dimensions[index].grossWeight}
+                            inputlabel="GROSS WEIGHT"
+                        />
+                    </Grid>
+                </Grid>
             </Grid>
             {dimensions.length > 1 &&
-                <Grid item md={1} className='delete-dimension-btn-container'>
+                <Grid item sm={1} xs={12} className='delete-dimension-btn-container'>
                     <CustomButton
                         icon={<DeleteIcon />}
                         className="delete-dimension-btn"
@@ -164,5 +169,6 @@ export const Dimensions = ({ index, item, dimensions, onChange }) => {
                 </Grid>
             }
         </Grid>
+
     )
 }

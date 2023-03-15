@@ -4,7 +4,7 @@ import { GoolgePlaceSearch } from '../Services/CommonService';
 import axios from "axios";
 import { Autocomplete, Box, FormLabel, TextField } from "@mui/material";
 
-const LocationAutoComplete = (props, ref) => {
+const LocationAutoComplete = (props) => {
 
     const [listData, setListData] = useState([]);
     const [value, setValue] = useState(null);
@@ -27,7 +27,7 @@ const LocationAutoComplete = (props, ref) => {
 
     }
 
-    function setMarkers(map, markers) {
+    const setMarkers = (map, markers) => {
         var bounds = new window.google.maps.LatLngBounds();
         for (var i = 0; i < markers.length; i++) {
             console.log(markers[i])
@@ -41,13 +41,15 @@ const LocationAutoComplete = (props, ref) => {
     }
 
     const onGenerateMap = async (mainItem, items) => {
-        const center = new window.google.maps.LatLng(items[0]?.lat, items[0]?.lng);
-        var map = new window.google.maps.Map(document.getElementById(props?.mapid), {
-            center: center,
-            zoom: 15,
-        });
-        setMap(map);
-        setMarkers(map, [...items, mainItem])
+        if (items?.length > 0) {
+            const center = new window.google.maps.LatLng(items[0]?.lat, items[0]?.lng);
+            var map = new window.google.maps.Map(document.getElementById(props?.mapid), {
+                center: center,
+                zoom: 15,
+            });
+            setMap(map);
+            setMarkers(map, [...items, mainItem])
+        }
     }
 
     const NearByplaces = async (item) => {
@@ -70,7 +72,7 @@ const LocationAutoComplete = (props, ref) => {
 
             })
             .catch(error => {
-                console.log(error);
+                console.log("error", error);
             });
 
     }
@@ -85,9 +87,9 @@ const LocationAutoComplete = (props, ref) => {
         }
     }
 
-    const handleOnSelect = (val) => {
-        props.handleChange(val);
-        setValue(val);
+    const handleOnSelect = (item, selected) => {
+        props.handleChange(item);
+        setValue(`${item?.name ?? selected?.city} ${selected?.country}`);
         setListData([]);
         setListNearByData([]);
         setSelectedCountry(null);
@@ -95,10 +97,9 @@ const LocationAutoComplete = (props, ref) => {
 
     const moveToMarker = (item) => {
         const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
-        if(map !== null){
+        if (map !== null) {
             map?.panTo(markerLatLng);
         }
-        
     }
 
     return (
@@ -109,11 +110,11 @@ const LocationAutoComplete = (props, ref) => {
                 freeSolo
                 fullWidth
                 value={value}
-                options={listNearByData.length > 0 ? listNearByData : listData}
+                options={listNearByData?.length > 0 ? listNearByData : listData}
                 autoHighlight
                 onInputChange={(e, option) => {
                     if (option) {
-                        if (listNearByData.length === 0) {
+                        if (listNearByData?.length === 0) {
                             SearchPlaces(option)
                         }
                     } else {
@@ -128,11 +129,11 @@ const LocationAutoComplete = (props, ref) => {
                 filterSelectedOptions={true}
                 loading={showloader}
                 loadingText={<span className="loader" />}
-                getOptionLabel={(option) => {                    
-                    if (listNearByData.length === 0 && option.city) {
-                        return option.city + " " + option.country
-                    } else if (option.name) {
-                        return option.name
+                getOptionLabel={(option) => {
+                    if (listNearByData?.length === 0 && option?.city) {
+                        return option?.city + " " + option?.country
+                    } else if (option?.name) {
+                        return option?.name
                     } else {
                         return option
                     }
@@ -149,7 +150,7 @@ const LocationAutoComplete = (props, ref) => {
                                 />
                                 {option.city} {option.region}
                             </p>
-                            <small className="city-country">{option.city} {option.country}</small>
+                            <small className="city-country">{option?.city} {option?.country}</small>
                         </Box>
                     </div>
                 )}
@@ -164,16 +165,16 @@ const LocationAutoComplete = (props, ref) => {
                 <div className="autoselect" onMouseLeave={() => setDisableClear(false)}>
                     <div className="customrow">
                         <div className="placename">
-                            <Box component="div" className="autorow" onClick={() => handleOnSelect(`${selectedCountry.city} ${selectedCountry.country}`)} onMouseEnter={() => { setDisableClear(true); moveToMarker(selectedCountry); }}>
+                            <Box component="div" className="autorow" onClick={() => handleOnSelect(null, selectedCountry)} onMouseEnter={() => { setDisableClear(true); moveToMarker(selectedCountry); }}>
                                 <p className="city-region">
                                     <img src="./building.svg" alt="Port" style={{ marginRight: '10px' }} />
-                                    {selectedCountry.city} {selectedCountry.region}
+                                    {selectedCountry?.city} {selectedCountry?.region}
                                 </p>
-                                <small className="city-country">{selectedCountry.city} {selectedCountry.country}</small>
+                                <small className="city-country">{selectedCountry?.city} {selectedCountry?.country}</small>
                             </Box>
-                            {listNearByData.length > 0 && listNearByData?.map((item, index) => {
+                            {listNearByData?.length > 0 && listNearByData?.map((item, index) => {
                                 return (
-                                    <Box key={`city_${index}`} component="div" className="autorow" onClick={() => handleOnSelect(`${item.name} ${selectedCountry.country}`)} onMouseEnter={() => { setDisableClear(true); moveToMarker(item); }}>
+                                    <Box key={`city_${index}`} component="div" className="autorow" onClick={() => handleOnSelect(item, selectedCountry)} onMouseEnter={() => { setDisableClear(true); moveToMarker(item); }}>
                                         <p className="city-region">
                                             <img src="./port.svg" alt="Port" style={{ marginRight: '10px' }} />
                                             {item?.name}
@@ -184,7 +185,7 @@ const LocationAutoComplete = (props, ref) => {
                             })}
                         </div>
                         <div className="placemap">
-                            <div style={selectedCountry && { height: 300 }} id={props?.mapid}></div>
+                            <div style={{ height: 300 }} id={props?.mapid}></div>
                         </div>
                     </div>
                 </div>

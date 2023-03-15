@@ -9,7 +9,7 @@ const InputField = (props) => {
         placeholder={props.placeholder}
         fullWidth
         type={props.type ?? 'text'}
-        value={props.value}
+        value={props.value ?? ""}
         onChange={props.onChange}
         mb={-1}
         name={props.name ?? ""}

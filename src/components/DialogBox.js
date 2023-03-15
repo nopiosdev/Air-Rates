@@ -25,6 +25,7 @@ const DialogBox = (props) => {
             open={props.open}
             onClose={handleOnCancelBtnClick}
             maxWidth="lg"
+            sx={{ '& .MuiDialog-paper': { minWidth: { md: '800px', sm: '600px' } } }}
             className='hs-modal'
         >
             <DialogTitle>
