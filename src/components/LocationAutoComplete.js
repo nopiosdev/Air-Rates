@@ -19,10 +19,12 @@ const LocationAutoComplete = (props) => {
         setShowloader(true)
         await GoolgePlaceSearch(e)
             .then((res) => {
-                console.log(res)
                 if (res && res?.length > 0) {
-                    setListData(JSON.parse(JSON.stringify(res)));
-                    setShowloader(false)
+                    setListData(res);
+                    setShowloader(false);
+                } else {
+                    setListData([]);
+                    setShowloader(false);
                 }
             })
 
@@ -31,7 +33,7 @@ const LocationAutoComplete = (props) => {
     const setMarkers = (map, markers) => {
         var bounds = new window.google.maps.LatLngBounds();
         for (var i = 0; i < markers.length; i++) {
-            console.log(markers[i])
+            console.log(markers[i], parseFloat(markers[i].lat), parseFloat(markers[i].lng))
             var marker = new window.google.maps.Marker({
                 position: { lat: parseFloat(markers[i].lat), lng: parseFloat(markers[i].lng) },
                 map: map,
@@ -97,9 +99,11 @@ const LocationAutoComplete = (props) => {
     }
 
     const moveToMarker = (item) => {
-        const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
-        if (map !== null) {
-            map?.panTo(markerLatLng);
+        if (item?.lat && item?.lng) {
+            const markerLatLng = new window.google.maps.LatLng(item?.lat, item?.lng);
+            if (map !== null) {
+                map?.panTo(markerLatLng);
+            }
         }
     }
 
@@ -114,7 +118,6 @@ const LocationAutoComplete = (props) => {
                 options={listNearByData?.length > 0 ? listNearByData : listData}
                 autoHighlight
                 onInputChange={(e, option) => {
-                    console.log("option", option)
                     if (option) {
                         if (listNearByData?.length === 0) {
                             SearchPlaces(option)
