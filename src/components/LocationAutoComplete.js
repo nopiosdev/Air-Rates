@@ -33,7 +33,6 @@ const LocationAutoComplete = (props) => {
     const setMarkers = (map, markers) => {
         var bounds = new window.google.maps.LatLngBounds();
         for (var i = 0; i < markers.length; i++) {
-            console.log(markers[i], parseFloat(markers[i].lat), parseFloat(markers[i].lng))
             var marker = new window.google.maps.Marker({
                 position: { lat: parseFloat(markers[i].lat), lng: parseFloat(markers[i].lng) },
                 map: map,
@@ -91,6 +90,8 @@ const LocationAutoComplete = (props) => {
     }
 
     const handleOnSelect = (item, selected) => {
+        item.city = selected.city;
+        item.country = selected.country;
         props.handleChange(item);
         setValue(`${item?.name ?? selected?.city} ${selected?.country}`);
         setListData([]);
@@ -176,7 +177,7 @@ const LocationAutoComplete = (props) => {
                 <div className="autoselect" onMouseLeave={() => setDisableClear(false)}>
                     <div className="customrow">
                         <div className="placename">
-                            <Box component="div" className="autorow" onClick={() => handleOnSelect(null, selectedCountry)} onMouseEnter={() => { setDisableClear(true); moveToMarker(selectedCountry); }}>
+                            <Box component="div" className="autorow" onClick={() => handleOnSelect(selectedCountry, selectedCountry)} onMouseEnter={() => { setDisableClear(true); moveToMarker(selectedCountry); }}>
                                 <p className="city-region">
                                     <img src="./building.svg" alt="Port" style={{ marginRight: '10px' }} />
                                     {selectedCountry?.city} {selectedCountry?.region}

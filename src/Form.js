@@ -454,13 +454,13 @@ const Form = () => {
                                 exclusive
                                 onChange={handleDeliveryWay}
                             >
-                                <ToggleButton name="deliveryWay" className='selected-sea' value={'1'}>
+                                <ToggleButton name="deliveryWay" className='selected-sea' value={'sea'}>
                                     <BoatIcon active={formData['deliveryWay']} />&nbsp;SEA
                                 </ToggleButton>
-                                <ToggleButton name="deliveryWay" className='selected-land' value={'2'}>
+                                <ToggleButton name="deliveryWay" className='selected-land' value={'land'}>
                                     <RoadIcon active={formData['deliveryWay']} />&nbsp;LAND
                                 </ToggleButton>
-                                <ToggleButton name="deliveryWay" className='selected-air' value={'3'}>
+                                <ToggleButton name="deliveryWay" className='selected-air' value={'air'}>
                                     <PlaneIcon active={formData['deliveryWay']} />&nbsp;AIR
                                 </ToggleButton>
                             </StyledToggleButtonGroup>
@@ -900,7 +900,6 @@ const Form = () => {
                 loading={isLoaded}
                 handleClose={() => setModal(false)}
                 handleOnSelect={(val) => {
-                    console.log("handleOnSelect", val)
                     val.description = val.title;
                     let item = {
                         target: {
