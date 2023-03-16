@@ -36,6 +36,7 @@ const ByUnits = (props) => {
                     dimensions={props.dimensions}
                     onChange={props.onChange}
                     metricState={props.metricState}
+                    key={`dimension_${i}`}
                 />
             )}
             <Grid container mt={0} spacing={3}>

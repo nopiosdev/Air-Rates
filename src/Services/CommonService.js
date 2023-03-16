@@ -1,13 +1,18 @@
 
 import axios from "axios";
-import { Post } from "../utils/RestClient";
 
 
 const GoolgePlaceSearch = (input) => {
     let payload = {
         input: input
     }
-    return Post(`https://www.searates.com/search/google-autocomplete`, payload)
+    return axios.post(`https://www.searates.com/search/google-autocomplete`, payload)
+        .then(({ data }) => {
+            return data;
+        })
+        .catch((error) => {
+            return error;
+        });
 }
 
 const getHSCodes = (code = null, level = 0, setIsLoaded, setData) => {

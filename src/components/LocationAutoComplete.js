@@ -19,9 +19,10 @@ const LocationAutoComplete = (props) => {
         setShowloader(true)
         await GoolgePlaceSearch(e)
             .then((res) => {
-                if (res != null) {
+                console.log(res)
+                if (res && res?.length > 0) {
+                    setListData(JSON.parse(JSON.stringify(res)));
                     setShowloader(false)
-                    setListData(res);
                 }
             })
 
@@ -113,6 +114,7 @@ const LocationAutoComplete = (props) => {
                 options={listNearByData?.length > 0 ? listNearByData : listData}
                 autoHighlight
                 onInputChange={(e, option) => {
+                    console.log("option", option)
                     if (option) {
                         if (listNearByData?.length === 0) {
                             SearchPlaces(option)
@@ -127,8 +129,10 @@ const LocationAutoComplete = (props) => {
                 onBlur={onClear}
                 clearOnBlur={!disableClear ? true : false}
                 filterSelectedOptions={true}
+                filterOptions={(options) => options}
                 loading={showloader}
                 loadingText={<span className="loader" />}
+                openOnFocus={true}
                 getOptionLabel={(option) => {
                     if (listNearByData?.length === 0 && option?.city) {
                         return option?.city + " " + option?.country
@@ -138,22 +142,26 @@ const LocationAutoComplete = (props) => {
                         return option
                     }
                 }}
-                renderOption={(props, option) => (
-                    <div {...props}>
-                        <Box component="div" className="city-option-container" onClick={() => { NearByplaces(option) }}>
-                            <p className="city-region">
-                                <ReactCountryFlag
-                                    countryCode={option?.code}
-                                    style={{ width: 16, height: 16, marginRight: "10px" }}
-                                    svg
-                                    cdnSuffix="svg"
-                                />
-                                {option.city} {option.region}
-                            </p>
-                            <small className="city-country">{option?.city} {option?.country}</small>
-                        </Box>
-                    </div>
-                )}
+                renderOption={(props, option) => {
+                    return (
+                        <div onClick={() => { NearByplaces(option) }}>
+                            <div {...props}>
+                                <Box component="div" className="city-option-container" >
+                                    <p className="city-region">
+                                        <ReactCountryFlag
+                                            countryCode={option?.code}
+                                            style={{ width: 16, height: 16, marginRight: "10px" }}
+                                            svg
+                                            cdnSuffix="svg"
+                                        />
+                                        {option.city} {option.region}
+                                    </p>
+                                    <small className="city-country">{option?.city} {option?.country}</small>
+                                </Box>
+                            </div>
+                        </div>
+                    )
+                }}
                 renderInput={(params) => (
                     <TextField
                         {...params}

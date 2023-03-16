@@ -3,7 +3,7 @@ import React from 'react'
 
 const CustomChip = (props) => {
   return (
-    <Chip className={`custom-chip ${props.className}`} onClick={props.onClick} name={props.name} avatar={props.avatar} label={props.label} variant={props.variant ?? 'standard'} />
+    <Chip sx={{ minWidth: { md: 'auto', xs: "185px" } }} className={`custom-chip ${props.className}`} onClick={props.onClick} name={props.name} avatar={props.avatar} label={props.label} variant={props.variant ?? 'standard'} />
   )
 }
 
