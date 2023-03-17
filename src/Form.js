@@ -504,13 +504,13 @@ const Form = () => {
                                 exclusive
                                 onChange={handleDeliveryWay}
                             >
-                                <ToggleButton name="modality" className='selected-sea' value={'1'}>
+                                <ToggleButton name="modality" className='selected-sea' value={'sea'}>
                                     <BoatIcon active={formData['modality']} />&nbsp;SEA
                                 </ToggleButton>
-                                <ToggleButton name="modality" className='selected-land' value={'2'}>
+                                <ToggleButton name="modality" className='selected-land' value={'land'}>
                                     <RoadIcon active={formData['modality']} />&nbsp;LAND
                                 </ToggleButton>
-                                <ToggleButton name="modality" className='selected-air' value={'3'}>
+                                <ToggleButton name="modality" className='selected-air' value={'air'}>
                                     <PlaneIcon active={formData['modality']} />&nbsp;AIR
                                 </ToggleButton>
                             </StyledToggleButtonGroup>
