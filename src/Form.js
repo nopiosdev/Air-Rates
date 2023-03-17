@@ -955,12 +955,14 @@ const Form = () => {
                 loading={isLoaded}
                 handleClose={() => setModal(false)}
                 handleOnSelect={(val) => {
+                    val.description = val.title;
                     let item = {
                         target: {
                             name: "product",
                             value: {
                                 ...formData['product'],
-                                description: val.title
+                                description: val.title,
+                                hsCode: val.code
                             }
                         }
                     }
