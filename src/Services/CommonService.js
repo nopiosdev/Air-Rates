@@ -34,8 +34,9 @@ const getHSCodes = (code = null, level = 0, setIsLoaded, setData) => {
             }
         }).then((result) => {
             let res = addIcon(result);
+            let temp = [...[{ code: "", category: "", description: "Freight all kinds", level: 0, class: "_1" }, { code: "", category: "", description: "Personal", level: 0, class: "_2" }], ...res]
             setIsLoaded(false);
-            setData(res)
+            setData(temp);
         });
     } else {
         axios({

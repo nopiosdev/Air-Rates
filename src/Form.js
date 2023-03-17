@@ -43,7 +43,7 @@ const Form = () => {
             let items = [
                 {
                     target: {
-                        name: "transportationType",
+                        name: "serviceType",
                         value: event.target.value === "1" ? "Full container load FCL" : null
                     }
                 },
@@ -60,23 +60,23 @@ const Form = () => {
         }
     };
     const handleCargoType = (cargoType) => {
-        if (formData["cargo-type"] === cargoType) {
-            let item = {
-                target: {
-                    name: "cargo-type",
-                    value: null
-                }
-            }
-            setFormData(item);
-        } else {
-            let item = {
-                target: {
-                    name: "cargo-type",
-                    value: cargoType
-                }
-            }
-            setFormData(item);
+        let temp = { ...formData['product'], type: cargoType, details: {} }
+
+        if (formData['product']?.type === cargoType) {
+            temp.type = null;
         }
+        let items = [{
+            target: {
+                name: "product",
+                value: temp
+            }
+        }, {
+            target: {
+                name: "associatedServices",
+                value: ["C"]
+            }
+        }]
+        items.map(x => setFormData(x));
     }
     const getIcon = (name, className) => {
         if (name === "boat") {
@@ -117,7 +117,7 @@ const Form = () => {
             },
             {
                 target: {
-                    name: "dimensions",
+                    name: "commodities",
                     value: [
                         {
                             height: 0,
@@ -172,7 +172,7 @@ const Form = () => {
             },
             {
                 target: {
-                    name: "containerType",
+                    name: "mainCarrier",
                     value: ""
                 }
             },
@@ -220,7 +220,7 @@ const Form = () => {
             },
             {
                 target: {
-                    name: "dimensions",
+                    name: "commodities",
                     value: [
                         {
                             height: 0,
@@ -242,13 +242,13 @@ const Form = () => {
         let items = [
             {
                 target: {
-                    name: "deliveryWay",
+                    name: "modality",
                     value: '1'
                 }
             },
             {
                 target: {
-                    name: "transportationType",
+                    name: "serviceType",
                     value: 'Full container load FCL'
                 }
             },
@@ -260,13 +260,13 @@ const Form = () => {
             },
             {
                 target: {
-                    name: "degree",
-                    value: 'C'
+                    name: "associatedServices",
+                    value: ["C"]
                 }
             },
             {
                 target: {
-                    name: "dimensions",
+                    name: "commodities",
                     value: [
                         {
                             height: 0,
@@ -282,7 +282,6 @@ const Form = () => {
         ]
         items.map(x => setFormData(x));
     }, [])
-
 
     return (
         <Container>
@@ -319,12 +318,25 @@ const Form = () => {
                             options={data}
                             autoHighlight
                             className='img-select'
-                            value={formData['commodityType'] || { description: "" }}
+                            value={formData['product'] || { description: "" }}
                             onChange={(e, option) => {
                                 if (!option) {
                                     getHSCodes(null, 0, setIsLoaded, setData);
+                                    let temp = {
+                                        hsCode: null,
+                                        description: "",
+                                        type: null,
+                                        details: {}
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                } else {
+                                    let temp = {
+                                        ...formData['product'],
+                                        hsCode: option?.code ?? null,
+                                        description: option?.description
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
                                 }
-                                setFormData({ target: { name: "commodityType", value: option } });
                             }}
                             getOptionLabel={(option) => option.description}
                             renderOption={(props, option) => (
@@ -344,23 +356,28 @@ const Form = () => {
                             )}
                         />
                     </Grid>
-                    {formData['commodityType'] &&
+                    {formData['product']?.description &&
                         <Grid item md={9} xs={12} mt={3}>
-                            <CustomChip className={formData['cargo-type'] === "hazardous" ? "active-chip" : ""} onClick={() => handleCargoType("hazardous")} avatar={<div className={`commodity-icons _25`} />} label="Hazardous cargo" />
-                            <CustomChip className={formData['cargo-type'] === "perishable" ? "active-chip" : ""} onClick={() => handleCargoType("perishable")} avatar={<div className={`commodity-icons _26`} />} label="Perishable cargo" />
-                            <CustomChip className={formData['cargo-type'] === "oversized" ? "active-chip" : ""} onClick={() => handleCargoType("oversized")} avatar={<div className={`commodity-icons _27`} />} label="Oversized cargo" />
-                            <CustomChip className={formData['cargo-type'] === "liquid" ? "active-chip" : ""} onClick={() => handleCargoType("liquid")} avatar={<div className={`commodity-icons _28`} />} label="Liquid cargo" />
+                            <CustomChip className={formData['product']?.type === "hazardous" ? "active-chip" : ""} onClick={() => handleCargoType("hazardous")} avatar={<div className={`commodity-icons _25`} />} label="Hazardous cargo" />
+                            <CustomChip className={formData['product']?.type === "perishable" ? "active-chip" : ""} onClick={() => handleCargoType("perishable")} avatar={<div className={`commodity-icons _26`} />} label="Perishable cargo" />
+                            <CustomChip className={formData['product']?.type === "oversized" ? "active-chip" : ""} onClick={() => handleCargoType("oversized")} avatar={<div className={`commodity-icons _27`} />} label="Oversized cargo" />
+                            <CustomChip className={formData['product']?.type === "liquid" ? "active-chip" : ""} onClick={() => handleCargoType("liquid")} avatar={<div className={`commodity-icons _28`} />} label="Liquid cargo" />
                         </Grid>
                     }
                 </Grid>
-                {(formData['cargo-type'] === "hazardous" && formData['commodityType']) &&
+                {(formData['product']?.type === "hazardous" && formData['product']?.description) &&
                     <Grid container mt={2} spacing={2}>
                         <Grid item md={5} sm={6} xs={12}>
                             <SelectDropDown
                                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
-                                value={formData['imo']}
-                                name="imo"
-                                onChange={setFormData}
+                                value={formData['product']?.details?.imo_class ?? ""}
+                                onChange={(e) => {
+                                    let temp = {
+                                        ...formData['product'],
+                                        details: { ...formData['product']?.details, imo_class: e.target.value }
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                }}
                                 placeholder="Imo class"
                                 label="IMO CLASS"
                                 data={IMO_CLASS}
@@ -370,22 +387,32 @@ const Form = () => {
                             <InputField
                                 inputlabel="UN NUMBER"
                                 placeholder="0"
-                                name="unnum"
-                                value={formData['unnum'] ?? 0}
-                                onChange={setFormData}
+                                value={formData['product']?.details?.un_number ?? ""}
+                                onChange={(e) => {
+                                    let temp = {
+                                        ...formData['product'],
+                                        details: { ...formData['product']?.details, un_number: e.target.value }
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                }}
                             />
                         </Grid>
                     </Grid>
                 }
-                {(formData['cargo-type'] === "oversized" && formData['commodityType']) &&
+                {(formData['product']?.type === "oversized" && formData['product']?.description) &&
                     <Grid container mt={0} spacing={3}>
                         <Grid item md={2.5} sm={4} xs={12}>
                             <CustomInputField
                                 btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                                 placeholder="0"
-                                name="length"
-                                onChange={setFormData}
-                                value={formData['length']}
+                                onChange={(e) => {
+                                    let temp = {
+                                        ...formData['product'],
+                                        details: { ...formData['product']?.details, length: e.target.value }
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                }}
+                                value={formData['product']?.details?.length ?? ""}
                                 inputlabel="LENGTH"
                             />
                         </Grid>
@@ -393,9 +420,14 @@ const Form = () => {
                             <CustomInputField
                                 btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                                 placeholder="0"
-                                name="width"
-                                onChange={setFormData}
-                                value={formData['width']}
+                                onChange={(e) => {
+                                    let temp = {
+                                        ...formData['product'],
+                                        details: { ...formData['product']?.details, width: e.target.value }
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                }}
+                                value={formData['product']?.details?.width ?? ""}
                                 inputlabel="WIDTH"
                             />
                         </Grid>
@@ -403,15 +435,20 @@ const Form = () => {
                             <CustomInputField
                                 btnText={formData['metricState'] === "Imperial (US)" ? "ft" : "m"}
                                 placeholder="0"
-                                name="height"
-                                onChange={setFormData}
-                                value={formData['height']}
+                                onChange={(e) => {
+                                    let temp = {
+                                        ...formData['product'],
+                                        details: { ...formData['product']?.details, height: e.target.value }
+                                    }
+                                    setFormData({ target: { name: "product", value: temp } });
+                                }}
+                                value={formData['product']?.details?.height ?? ""}
                                 inputlabel="HEIGHT"
                             />
                         </Grid>
                     </Grid>
                 }
-                {(formData['cargo-type'] === "perishable" && formData['commodityType']) &&
+                {(formData['product']?.type === "perishable" && formData['product']?.description) &&
                     <Grid container mt={3}>
                         <Grid item md={5} sm={6} xs={12}>
                             <InputLabel className='input-label'>TEMPERATURE REGIME</InputLabel>
@@ -422,12 +459,25 @@ const Form = () => {
                                 <InputBase
                                     sx={{ ml: 1, flex: 2 }}
                                     placeholder="0"
-                                    onChange={setFormData}
-                                    value={formData['temperature']}
-                                    name="temperature"
+                                    onChange={(e) => {
+                                        let temp = {
+                                            ...formData['product'],
+                                            details: { ...formData['product']?.details, temperature: e.target.value }
+                                        }
+                                        setFormData({ target: { name: "product", value: temp } });
+                                    }}
+                                    value={formData['product']?.details?.temperature ?? ""}
                                 />
                                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                                <TextField onChange={setFormData} value={formData['degree']} name="degree" sx={{ ml: 1, flex: 1 }} id="select" select>
+                                <TextField
+                                    onChange={(e) => {
+                                        setFormData({ target: { name: "associatedServices", value: [e.target.value] } });
+                                    }}
+                                    value={formData['associatedServices'][0] ?? ""}
+                                    sx={{ ml: 1, flex: 1 }}
+                                    id="select"
+                                    select
+                                >
                                     <MenuItem value="C"><sup>o</sup>C</MenuItem>
                                     <MenuItem value="F"><sup>o</sup>F</MenuItem>
                                 </TextField>
@@ -450,18 +500,18 @@ const Form = () => {
                             <StyledToggleButtonGroup
                                 size="small"
                                 sx={{ width: '100%' }}
-                                value={formData['deliveryWay']}
+                                value={formData['modality']}
                                 exclusive
                                 onChange={handleDeliveryWay}
                             >
-                                <ToggleButton name="deliveryWay" className='selected-sea' value={'1'}>
-                                    <BoatIcon active={formData['deliveryWay']} />&nbsp;SEA
+                                <ToggleButton name="modality" className='selected-sea' value={'1'}>
+                                    <BoatIcon active={formData['modality']} />&nbsp;SEA
                                 </ToggleButton>
-                                <ToggleButton name="deliveryWay" className='selected-land' value={'2'}>
-                                    <RoadIcon active={formData['deliveryWay']} />&nbsp;LAND
+                                <ToggleButton name="modality" className='selected-land' value={'2'}>
+                                    <RoadIcon active={formData['modality']} />&nbsp;LAND
                                 </ToggleButton>
-                                <ToggleButton name="deliveryWay" className='selected-air' value={'3'}>
-                                    <PlaneIcon active={formData['deliveryWay']} />&nbsp;AIR
+                                <ToggleButton name="modality" className='selected-air' value={'3'}>
+                                    <PlaneIcon active={formData['modality']} />&nbsp;AIR
                                 </ToggleButton>
                             </StyledToggleButtonGroup>
                         </Paper>
@@ -469,17 +519,17 @@ const Form = () => {
                     <Grid item md={3} sm={6} xs={12}>
                         <StyledToggleButtonGroup
                             size="small"
-                            value={formData['deliveryWay']}
+                            value={formData['modality']}
                             exclusive
                             onChange={handleDeliveryWay}
                         >
-                            <ToggleButton name="deliveryWay" className='selected-auto' value={"auto"}>
-                                <RocketIcon active={formData['deliveryWay']} />&nbsp;AUTO
+                            <ToggleButton name="modality" className='selected-auto' value={"auto"}>
+                                <RocketIcon active={formData['modality']} />&nbsp;AUTO
                             </ToggleButton>
                         </StyledToggleButtonGroup>
                     </Grid>
                 </Grid>
-                {formData['deliveryWay'] === 'auto' ?
+                {formData['modality'] === 'auto' ?
                     <Grid container mt={1} spacing={3}>
                         <Grid item md={5} xs={12}>
                             <CustomInputField
@@ -513,8 +563,8 @@ const Form = () => {
                                 fullWidth
                                 displayEmpty
                                 IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
-                                value={formData["transportationType"] ?? ""}
-                                name="transportationType"
+                                value={formData["serviceType"] ?? ""}
+                                name="serviceType"
                                 onChange={(e) => handleTransportationType(e)}
                                 renderValue={(selected) => {
                                     if (!selected) {
@@ -524,7 +574,7 @@ const Form = () => {
                                     }
                                 }}
                             >
-                                {TRANSPORTATION_DATA[Number(formData['deliveryWay']) - 1]?.options?.map((opt) => {
+                                {TRANSPORTATION_DATA[Number(formData['modality']) - 1]?.options?.map((opt) => {
                                     return opt.suboptions.map(item => (
                                         item.title ?
                                             <ListSubheader>
@@ -540,14 +590,14 @@ const Form = () => {
                         </Grid>
                     </Grid>
                 }
-                {(formData["transportationType"] === "Full container load FCL" || formData["transportationType"] === "ULD container") &&
+                {(formData["serviceType"] === "Full container load FCL" || formData["serviceType"] === "ULD container") &&
                     <Grid container mt={0} spacing={3}>
                         <Grid item md={5} sm={6} xs={12}>
                             <SelectDropDown
                                 label="CONTAINER TYPE"
                                 icon={(props) => <KeyboardArrowDownIcon {...props} />}
-                                value={formData['containerType'] ?? ""}
-                                name="containerType"
+                                value={formData['mainCarrier'] ?? ""}
+                                name="mainCarrier"
                                 onChange={setFormData}
                                 placeholder="Container type"
                                 data={CONTAINER_TYPE}
@@ -565,7 +615,7 @@ const Form = () => {
                         </Grid>
                     </Grid>
                 }
-                {(formData["transportationType"] === "Less container load LCL" || formData["transportationType"] === "Less truck load LTL" || formData["transportationType"] === "Standard cargo") &&
+                {(formData["serviceType"] === "Less container load LCL" || formData["serviceType"] === "Less truck load LTL" || formData["serviceType"] === "Standard cargo") &&
                     <>
                         <Grid container mt={1}>
                             <Grid item xs={12}>
@@ -580,7 +630,7 @@ const Form = () => {
                         {formData["byUnits"] === true ?
                             <ByUnits
                                 onChange={setFormData}
-                                dimensions={formData['dimensions']}
+                                dimensions={formData['commodities']}
                                 metricState={formData['metricState']}
                             />
                             :
@@ -612,7 +662,7 @@ const Form = () => {
                         }
                     </>
                 }
-                {formData["transportationType"] === "Bulk" &&
+                {formData["serviceType"] === "Bulk" &&
                     <>
                         <Grid container mt={0} spacing={3}>
                             <Grid item md={5} sm={6} xs={12}>
@@ -660,7 +710,7 @@ const Form = () => {
                         </Grid>
                     </>
                 }
-                {formData["transportationType"] === "Full truck load FTL" &&
+                {formData["serviceType"] === "Full truck load FTL" &&
                     <Grid container mt={0} spacing={3}>
                         <Grid item md={5} sm={6} xs={12}>
                             <SelectDropDown
@@ -685,7 +735,7 @@ const Form = () => {
                         </Grid>
                     </Grid>
                 }
-                {formData["transportationType"] === "Full wagon load FWL" &&
+                {formData["serviceType"] === "Full wagon load FWL" &&
                     <Grid container mt={0} spacing={3}>
                         <Grid item md={5} sm={6} xs={12}>
                             <SelectDropDown
@@ -717,11 +767,11 @@ const Form = () => {
                             required={true}
                             Inputplaceholder={'City , Port'}
                             mapid={'frommap'}
-                            handleChange={(opt) => {
+                            handleChange={(data) => {
                                 let item = {
                                     target: {
-                                        name: "from",
-                                        value: opt
+                                        name: "origin",
+                                        value: data
                                     }
                                 }
                                 setFormData(item);
@@ -737,7 +787,7 @@ const Form = () => {
                             handleChange={(opt) => {
                                 let item = {
                                     target: {
-                                        name: "to",
+                                        name: "destination",
                                         value: opt
                                     }
                                 }
@@ -776,15 +826,20 @@ const Form = () => {
                     <Popover title={"Add cargo insurance to your shipment to stay safe from any accidents."} >
                         <CustomChip
                             onClick={() => {
-                                let item = {
+                                let items = [{
                                     target: {
-                                        name: "insurance",
-                                        value: formData["insurance"] === true ? false : true
+                                        name: "isExternal",
+                                        value: formData["isExternal"] === true ? false : true
                                     }
-                                }
-                                setFormData(item);
+                                }, {
+                                    target: {
+                                        name: "invoiceAmount",
+                                        value: ''
+                                    }
+                                }]
+                                items.map(x => setFormData(x));
                             }}
-                            avatar={<><CheckBox name="insurance" checked={formData["insurance"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>}
+                            avatar={<><CheckBox name="isExternal" checked={formData["isExternal"]} onChange={setFormData} /><div className={`commodity-icons _29`} /></>}
                             label="Insurance"
                         />
                     </Popover>
@@ -833,7 +888,7 @@ const Form = () => {
                         />
                     </Popover>
                 </Box>
-                {formData['insurance'] === true &&
+                {formData['isExternal'] === true &&
                     <Grid container mt={3}>
                         <Grid item sm={4} xs={12}>
                             <CustomInputField
@@ -900,12 +955,13 @@ const Form = () => {
                 loading={isLoaded}
                 handleClose={() => setModal(false)}
                 handleOnSelect={(val) => {
-                    console.log("handleOnSelect", val)
-                    val.description = val.title;
                     let item = {
                         target: {
-                            name: "commodityType",
-                            value: val
+                            name: "product",
+                            value: {
+                                ...formData['product'],
+                                description: val.title
+                            }
                         }
                     }
                     getHSCodes(val.code, val.level, setIsLoaded, setData);

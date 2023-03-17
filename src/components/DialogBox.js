@@ -36,13 +36,15 @@ const DialogBox = (props) => {
                     <div className='modal-content'>
                         <div className='modal-heading'><span onClick={() => { getHSCodes(null, 0, setIsLoaded, setData); setSelectedCategory([]); }}>Main categories / </span>{selectedCategory.map(x => <span onClick={() => { getHSCodes(x.code, x.level, setIsLoaded, setData); setSelectedCategory(selectedCategory.filter(y => y.level <= x.level)) }}>{x.title + " / "}</span>)}</div>
                         {data?.map((x, i) => {
-                            return <div key={`code_${x.code}`} className="flex-box" onClick={() => handleOnCategoryClick(x)}>
-                                <div className="flex-box">
-                                    <div className={`commodity-icons ${x?.class}`} />
-                                    {x.description}
+                            if (x.code) {
+                                return <div key={`code_${x.code}`} className="flex-box" onClick={() => handleOnCategoryClick(x)}>
+                                    <div className="flex-box">
+                                        <div className={`commodity-icons ${x?.class}`} />
+                                        {x.description}
+                                    </div>
+                                    <div className='hs-code'>{x.code}</div>
                                 </div>
-                                <div className='hs-code'>{x.code}</div>
-                            </div>
+                            }
                         }
                         )}
                     </div>

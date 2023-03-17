@@ -1,18 +1,17 @@
+import axios from "axios";
 import React, { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { GoolgePlaceSearch } from '../Services/CommonService';
-import axios from "axios";
 import { Autocomplete, Box, FormLabel, TextField } from "@mui/material";
 
 const LocationAutoComplete = (props) => {
 
-    const [listData, setListData] = useState([]);
-    const [value, setValue] = useState(null);
-
-    const [listNearByData, setListNearByData] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState(null);
+    const [listNearByData, setListNearByData] = useState([]);
     const [disableClear, setDisableClear] = useState(false);
     const [showloader, setShowloader] = useState(false);
+    const [listData, setListData] = useState([]);
+    const [value, setValue] = useState(null);
     const [map, setMap] = useState(null);
 
     const SearchPlaces = async (e) => {
@@ -33,7 +32,6 @@ const LocationAutoComplete = (props) => {
     const setMarkers = (map, markers) => {
         var bounds = new window.google.maps.LatLngBounds();
         for (var i = 0; i < markers.length; i++) {
-            console.log(markers[i], parseFloat(markers[i].lat), parseFloat(markers[i].lng))
             var marker = new window.google.maps.Marker({
                 position: { lat: parseFloat(markers[i].lat), lng: parseFloat(markers[i].lng) },
                 map: map,
@@ -68,7 +66,7 @@ const LocationAutoComplete = (props) => {
         axios.post('https://www.searates.com/search/google-geocode', formData, config)
             .then(response => {
                 setListData([])
-                let temp = { ...item, ...response?.data?.results[0].geometry.location };
+                let temp = { ...item, ...response?.data?.results[0].geometry.location, formatted_address: response?.data?.results[0].formatted_address };
                 setSelectedCountry(temp)
                 setListNearByData(response?.data?.country_ports);
                 onGenerateMap(temp, response?.data?.country_ports)
@@ -91,7 +89,29 @@ const LocationAutoComplete = (props) => {
     }
 
     const handleOnSelect = (item, selected) => {
-        props.handleChange(item);
+        let data = {
+            address: {
+                address1: null,
+                address2: null,
+                city: selected?.city,
+                state: null,
+                country: selected?.country,
+                region: selected?.region,
+                zipCode: null,
+                references: "",
+                province: null,
+                location: {
+                    latitude: item?.lat ?? selected?.lat,
+                    longitude: item?.lng ?? selected?.lng
+                },
+                countryCodeISO3: "",
+                countryCode: selected?.counrty_code,
+                completeAddress: selected?.formatted_address
+            },
+            code: selected?.code,
+            name: item?.name ?? null,
+        }
+        props.handleChange(data);
         setValue(`${item?.name ?? selected?.city} ${selected?.country}`);
         setListData([]);
         setListNearByData([]);
