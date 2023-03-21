@@ -1,6 +1,6 @@
 
-export const TRANSPORTATION_DATA = [
-    {
+export const TRANSPORTATION_DATA = {
+    sea: {
         options: [
             {
                 icon: "boat",
@@ -13,7 +13,7 @@ export const TRANSPORTATION_DATA = [
             }
         ]
     },
-    {
+    land: {
         options: [
             {
                 icon: "truck",
@@ -36,7 +36,7 @@ export const TRANSPORTATION_DATA = [
             }
         ]
     },
-    {
+    air: {
         options: [
             {
                 icon: "plane",
@@ -47,8 +47,8 @@ export const TRANSPORTATION_DATA = [
                 ]
             }
         ]
-    },
-]
+    }
+}
 
 export const CONTAINER_TYPE = [
     "20' Standard",

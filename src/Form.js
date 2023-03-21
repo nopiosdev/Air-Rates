@@ -574,7 +574,7 @@ const Form = () => {
                                     }
                                 }}
                             >
-                                {TRANSPORTATION_DATA[Number(formData['modality']) - 1]?.options?.map((opt) => {
+                                {TRANSPORTATION_DATA[formData['modality']]?.options?.map((opt) => {
                                     return opt.suboptions.map(item => (
                                         item.title ?
                                             <ListSubheader>
