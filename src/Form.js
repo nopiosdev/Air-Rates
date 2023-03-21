@@ -505,13 +505,13 @@ const Form = () => {
                                 onChange={handleDeliveryWay}
                             >
                                 <ToggleButton name="modality" className='selected-sea' value={'sea'}>
-                                    <BoatIcon active={formData['modality']} />&nbsp;SEA
+                                    <BoatIcon active={formData['modality'] === "sea"} />&nbsp;SEA
                                 </ToggleButton>
                                 <ToggleButton name="modality" className='selected-land' value={'land'}>
-                                    <RoadIcon active={formData['modality']} />&nbsp;LAND
+                                    <RoadIcon active={formData['modality'] === "land"} />&nbsp;LAND
                                 </ToggleButton>
                                 <ToggleButton name="modality" className='selected-air' value={'air'}>
-                                    <PlaneIcon active={formData['modality']} />&nbsp;AIR
+                                    <PlaneIcon active={formData['modality'] === "air"} />&nbsp;AIR
                                 </ToggleButton>
                             </StyledToggleButtonGroup>
                         </Paper>
@@ -524,7 +524,7 @@ const Form = () => {
                             onChange={handleDeliveryWay}
                         >
                             <ToggleButton name="modality" className='selected-auto' value={"auto"}>
-                                <RocketIcon active={formData['modality']} />&nbsp;AUTO
+                                <RocketIcon active={formData['modality'] === "auto"} />&nbsp;AUTO
                             </ToggleButton>
                         </StyledToggleButtonGroup>
                     </Grid>
